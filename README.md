@@ -26,6 +26,7 @@ The Existence Optimization Quotient (EOQ) evaluates content across four key dime
 - **Toggle Control**: Easy switching between EOQ and original rankings
 
 ### Advanced Features
+- **Sponsored Result Filtering**: Automatically hides or de-prioritizes sponsored/ad content
 - **Caching System**: Stores calculated scores to reduce API calls
 - **Session Statistics**: Tracks searches enhanced and average improvements
 - **Export Functionality**: Download your usage data and settings
@@ -83,6 +84,7 @@ The extension will be available on the Chrome Web Store once approved.
 
 - **Enable EOQ Ranking**: Toggle automatic reordering of search results
 - **Show Score Overlays**: Display EOQ scores on search results
+- **Hide Sponsored Results**: Automatically filter out ads and sponsored content
 - **Cache Scores Locally**: Store calculated scores to reduce API usage
 
 ## 📖 How to Use
@@ -106,6 +108,36 @@ The extension will be available on the Chrome Web Store once approved.
 4. **Toggle Rankings**
    - Use the toggle switch to switch between EOQ and original rankings
    - Overlays can be hidden while keeping the reordering active
+
+### Sponsored Result Filtering
+
+The extension includes intelligent filtering of sponsored and advertising content to focus on organic, valuable results:
+
+#### What Gets Filtered
+- **Google Ads**: Top and bottom sponsored results
+- **Shopping Ads**: Product promotion boxes
+- **Affiliate Links**: Results primarily focused on commissions
+- **Promotional Content**: Marketing-heavy results with low informational value
+
+#### How It Works
+- **Automatic Detection**: Uses multiple signals to identify sponsored content
+  - DOM structure analysis (ad containers, sponsored labels)
+  - URL pattern matching (tracking parameters, affiliate domains)
+  - Content analysis (promotional language, commercial intent)
+- **Smart Filtering**: Can hide completely or just de-prioritize based on settings
+- **User Control**: Toggle sponsored filtering on/off in the extension popup
+
+#### Benefits
+- **Cleaner Results**: Focus on informational and educational content
+- **Reduced Manipulation**: Less exposure to purely commercial interests
+- **Better EOQ Scores**: Organic content typically scores higher for human flourishing
+- **Faster Processing**: Fewer results to analyze means quicker EOQ calculations
+
+#### Configuration Options
+- **Hide Completely**: Remove sponsored results entirely from view
+- **De-prioritize**: Move sponsored results to bottom but keep visible
+- **Mark Only**: Keep in place but add visual indicators
+- **Disable**: Turn off sponsored filtering entirely
 
 ### Understanding Scores
 

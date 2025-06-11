@@ -268,7 +268,7 @@ body {
   flex: 1;
   font-size: 14px;
   font-weight: 600;
-  color: #333;
+  color: white;
 }
 
 .dimension-weight {
@@ -325,7 +325,7 @@ body {
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
-  color: #333;
+  color: white;
   margin-bottom: 4px;
 }
 
