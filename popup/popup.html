@@ -37,6 +37,32 @@
         </div>
         <div id="api-status" class="status-message" style="display: none;"></div>
       </div>
+      
+      <div class="input-group">
+        <label for="model-select">Model Selection:</label>
+        <select id="model-select" class="model-select">
+          <option value="gpt-4o-mini">GPT-4o Mini (Fast & Affordable) - Recommended</option>
+          <option value="gpt-4o">GPT-4o (Balanced Speed & Quality)</option>
+          <option value="gpt-3.5-turbo">GPT-3.5 Turbo (Budget Option)</option>
+          <option value="gpt-4">GPT-4 (Highest Quality)</option>
+        </select>
+        <div class="model-info">
+          <div class="model-details" id="model-details">
+            <div class="model-stat">
+              <span class="stat-label">Speed:</span>
+              <span id="model-speed" class="stat-value">~600ms</span>
+            </div>
+            <div class="model-stat">
+              <span class="stat-label">Cost per 1000 searches:</span>
+              <span id="model-cost" class="stat-value">~$0.60</span>
+            </div>
+            <div class="model-stat">
+              <span class="stat-label">Quality:</span>
+              <span id="model-quality" class="stat-value">Very Good</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Session Stats Section -->

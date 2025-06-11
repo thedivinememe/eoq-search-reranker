@@ -44,15 +44,16 @@
         apiKey, 
         eoqEnabled = true, 
         hideSponsoredResults = true,
-        debugMode = false
-      } = await chrome.storage.sync.get(['apiKey', 'eoqEnabled', 'hideSponsoredResults', 'debugMode']);
+        debugMode = false,
+        preferredModel = 'gpt-4o-mini'
+      } = await chrome.storage.sync.get(['apiKey', 'eoqEnabled', 'hideSponsoredResults', 'debugMode', 'preferredModel']);
       
       console.log('API key available:', !!apiKey);
       console.log('EOQ enabled:', eoqEnabled);
       console.log('Debug mode:', debugMode);
 
       // Initialize components
-      calculator = new EOQCalculator(apiKey);
+      calculator = new EOQCalculator(apiKey, preferredModel);
       interceptor = new SearchInterceptor();
       interceptor.hideSponsoredResults = hideSponsoredResults;
       interceptor.debugMode = debugMode;
@@ -102,10 +103,10 @@
       // Show loading state
       showLoadingState();
 
-      // Score results sequentially to maintain order
-      scoredResults = [];
-      for (let i = 0; i < results.length; i++) {
-        const result = results[i];
+      // Score results in parallel for much faster processing
+      console.log('Starting parallel EOQ scoring...');
+      
+      const scoringPromises = results.map(async (result, i) => {
         try {
           console.log(`Processing result ${i + 1}/${results.length}: ${result.title?.substring(0, 50)}...`);
           
@@ -135,7 +136,7 @@
           // Create clean object without DOM references for EOQ calculation
           const cleanResult = { title, snippet, url };
           
-          // Calculate EOQ score sequentially to maintain order
+          // Calculate EOQ score in parallel
           const eoqScore = await calculator.calculateEOQ(cleanResult);
           
           // Create scored result with safe property copying and explicit ordering
@@ -151,11 +152,9 @@
             processingOrder: i // Track the order we processed this result
           };
           
-          scoredResults.push(scoredResult);
-          
           console.log(`Result ${i + 1} scored: ${eoqScore.total.toFixed(2)} (${eoqScore.method})`);
           
-          // Update progress safely
+          // Update progress safely (approximate since parallel)
           try {
             if (uiInjector && typeof uiInjector.updateProgress === 'function') {
               uiInjector.updateProgress(i + 1, results.length);
@@ -164,11 +163,13 @@
             console.warn('Progress update failed:', progressError);
           }
           
+          return scoredResult;
+          
         } catch (error) {
           console.warn(`Failed to score result ${i}:`, error);
           
           // Create safe fallback result
-          const fallbackResult = {
+          return {
             index: i,
             element: result.element || null,
             title: `Search Result ${i + 1}`,
@@ -184,10 +185,16 @@
             },
             processingOrder: i
           };
-          
-          scoredResults.push(fallbackResult);
         }
-      }
+      });
+
+      // Wait for all scoring to complete
+      scoredResults = await Promise.all(scoringPromises);
+      
+      // Sort by original processing order to maintain consistency
+      scoredResults.sort((a, b) => a.processingOrder - b.processingOrder);
+      
+      console.log(`Parallel scoring completed in ${performance.now() - Date.now()}ms`);
 
       // Hide loading state
       hideLoadingState();

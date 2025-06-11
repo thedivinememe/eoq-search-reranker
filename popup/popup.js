@@ -8,6 +8,10 @@ document.addEventListener('DOMContentLoaded', async function() {
   const saveKeyBtn = document.getElementById('save-key');
   const testKeyBtn = document.getElementById('test-key');
   const apiStatus = document.getElementById('api-status');
+  const modelSelect = document.getElementById('model-select');
+  const modelSpeed = document.getElementById('model-speed');
+  const modelCost = document.getElementById('model-cost');
+  const modelQuality = document.getElementById('model-quality');
   
   const searchCountEl = document.getElementById('search-count');
   const resultsScoredEl = document.getElementById('results-scored');
@@ -33,6 +37,7 @@ document.addEventListener('DOMContentLoaded', async function() {
   toggleVisibilityBtn.addEventListener('click', toggleApiKeyVisibility);
   saveKeyBtn.addEventListener('click', saveApiKey);
   testKeyBtn.addEventListener('click', testApiConnection);
+  modelSelect.addEventListener('change', updateModelSelection);
   
   enableEoqCheckbox.addEventListener('change', updateSettings);
   showOverlaysCheckbox.addEventListener('change', updateSettings);
@@ -61,7 +66,8 @@ document.addEventListener('DOMContentLoaded', async function() {
         'showOverlays', 
         'cacheScores',
         'hideSponsoredResults',
-        'debugMode'
+        'debugMode',
+        'preferredModel'
       ]);
 
       // Populate API key (masked)
@@ -77,6 +83,11 @@ document.addEventListener('DOMContentLoaded', async function() {
       cacheScoresCheckbox.checked = settings.cacheScores !== false;
       hideSponsoredCheckbox.checked = settings.hideSponsoredResults !== false;
       debugModeCheckbox.checked = settings.debugMode === true;
+
+      // Update model selection
+      const preferredModel = settings.preferredModel || 'gpt-4o-mini';
+      modelSelect.value = preferredModel;
+      updateModelInfo(preferredModel);
 
       // Update statistics
       updateStatistics(settings.sessionStats);
@@ -388,6 +399,62 @@ document.addEventListener('DOMContentLoaded', async function() {
       
     } catch (error) {
       console.error('Failed to update diagnostics:', error);
+    }
+  }
+
+  // Update model selection
+  async function updateModelSelection() {
+    const selectedModel = modelSelect.value;
+    
+    try {
+      await chrome.storage.sync.set({ preferredModel: selectedModel });
+      updateModelInfo(selectedModel);
+      showStatus('Model selection updated', 'success');
+    } catch (error) {
+      console.error('Failed to save model selection:', error);
+      showStatus('Failed to save model selection', 'error');
+    }
+  }
+
+  // Update model information display
+  function updateModelInfo(model) {
+    const modelInfo = {
+      'gpt-4o-mini': {
+        speed: '~600ms',
+        cost: '~$0.60',
+        quality: 'Very Good',
+        description: 'Fastest and most cost-effective option. Recommended for daily use.'
+      },
+      'gpt-4o': {
+        speed: '~1200ms',
+        cost: '~$3.00',
+        quality: 'Excellent',
+        description: 'Balanced speed and quality. Great for important searches.'
+      },
+      'gpt-3.5-turbo': {
+        speed: '~800ms',
+        cost: '~$0.90',
+        quality: 'Good',
+        description: 'Budget-friendly option with decent quality.'
+      },
+      'gpt-4': {
+        speed: '~2500ms',
+        cost: '~$18.00',
+        quality: 'Highest',
+        description: 'Best quality but slower and more expensive.'
+      }
+    };
+
+    const info = modelInfo[model] || modelInfo['gpt-4o-mini'];
+    
+    modelSpeed.textContent = info.speed;
+    modelCost.textContent = info.cost;
+    modelQuality.textContent = info.quality;
+    
+    // Update model details description
+    const modelDetails = document.getElementById('model-details');
+    if (modelDetails) {
+      modelDetails.title = info.description;
     }
   }
 

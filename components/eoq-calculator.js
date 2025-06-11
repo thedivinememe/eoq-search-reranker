@@ -1,7 +1,8 @@
 // EOQ Calculator - Core scoring engine for the Existence Optimization Quotient
 class EOQCalculator {
-  constructor(apiKey) {
+  constructor(apiKey, preferredModel = 'gpt-4o-mini') {
     this.apiKey = apiKey;
+    this.preferredModel = preferredModel;
     this.empathyWeights = {
       golden: 0.30,   // Reciprocity
       silver: 0.25,   // Non-harm
@@ -450,6 +451,9 @@ Example responses: 0.3, 0.7, 0.5
   }
 
   async callOpenAI(prompt) {
+    // Get user's preferred model, default to GPT-4o Mini for speed
+    const { preferredModel = 'gpt-4o-mini' } = await chrome.storage.sync.get(['preferredModel']);
+    
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -457,19 +461,19 @@ Example responses: 0.3, 0.7, 0.5
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4',
+        model: preferredModel,
         messages: [
           {
             role: 'system',
-            content: 'You are an expert at evaluating content for human flourishing and collective benefit. Provide precise, objective analysis.'
+            content: 'You are an expert at evaluating content for human flourishing and collective benefit. Provide precise, objective analysis in JSON format.'
           },
           {
             role: 'user',
             content: prompt
           }
         ],
-        temperature: 0.3,
-        max_tokens: 300
+        temperature: 0.2, // Reduced for more consistent results
+        max_tokens: 250   // Reduced for faster responses
       })
     });
 

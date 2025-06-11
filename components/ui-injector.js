@@ -117,7 +117,7 @@ class UIInjector {
       </div>
     `;
     
-    element.insertAdjacentHTML('afterbegin', overlayHtml);
+    element.insertAdjacentHTML('beforeend', overlayHtml);
     
     // Add click handler for expand button
     const expandBtn = element.querySelector('.eoq-expand-btn');
