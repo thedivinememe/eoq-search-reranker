@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EOQ Extension Test Page</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+        .test-item {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status.pass { background: #d4edda; color: #155724; }
+        .status.fail { background: #f8d7da; color: #721c24; }
+        .status.pending { background: #fff3cd; color: #856404; }
+        .code {
+            background: #f1f3f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .instructions {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #2196f3;
+        }
+        .search-queries {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .query-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+        }
+        .query-card:hover {
+            transform: translateY(-2px);
+        }
+        .query-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .query-text {
+            background: #f8f9fa;
+            padding: 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        .query-description {
+            font-size: 13px;
+            color: #666;
+        }
+        .test-link {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-top: 10px;
+            transition: background 0.3s ease;
+        }
+        .test-link:hover {
+            background: #5a6fd8;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🌟 EOQ Search Reranker Test Page</h1>
+        <p>Use this page to test and verify the extension functionality</p>
+    </div>
+
+    <div class="instructions">
+        <h2>📋 Testing Instructions</h2>
+        <ol>
+            <li>Ensure the EOQ Search Reranker extension is installed and enabled</li>
+            <li>Configure your OpenAI API key in the extension popup (optional but recommended)</li>
+            <li>Click on the test search links below to verify functionality</li>
+            <li>Look for the EOQ toggle control and score overlays on search results</li>
+            <li>Test the comparison panel and toggle functionality</li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h2>🔧 Extension Status Check</h2>
+        <div class="test-item">
+            <strong>Extension Loaded:</strong> 
+            <span id="extension-status" class="status pending">Checking...</span>
+            <p>Verifies that the extension is properly loaded and active.</p>
+        </div>
+        <div class="test-item">
+            <strong>API Key Configured:</strong> 
+            <span id="api-status" class="status pending">Checking...</span>
+            <p>Checks if an OpenAI API key is configured for AI-powered scoring.</p>
+        </div>
+        <div class="test-item">
+            <strong>Google Search Access:</strong> 
+            <span id="google-status" class="status pending">Checking...</span>
+            <p>Verifies that the extension has permission to access Google search pages.</p>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>🧪 Test Search Queries</h2>
+        <p>Click these links to test the extension with different types of content:</p>
+        
+        <div class="search-queries">
+            <div class="query-card">
+                <div class="query-title">Educational Content</div>
+                <div class="query-text">how to learn programming</div>
+                <div class="query-description">Should prioritize free resources and comprehensive guides</div>
+                <a href="https://www.google.com/search?q=how+to+learn+programming" class="test-link" target="_blank">Test Query</a>
+            </div>
+
+            <div class="query-card">
+                <div class="query-title">Health Information</div>
+                <div class="query-text">depression help</div>
+                <div class="query-description">Should elevate evidence-based and professional resources</div>
+                <a href="https://www.google.com/search?q=depression+help" class="test-link" target="_blank">Test Query</a>
+            </div>
+
+            <div class="query-card">
+                <div class="query-title">Financial Advice</div>
+                <div class="query-text">how to make money online</div>
+                <div class="query-description">Should deprioritize scams and promote ethical approaches</div>
+                <a href="https://www.google.com/search?q=how+to+make+money+online" class="test-link" target="_blank">Test Query</a>
+            </div>
+
+            <div class="query-card">
+                <div class="query-title">Social Issues</div>
+                <div class="query-text">climate change solutions</div>
+                <div class="query-description">Should favor collective action and scientific approaches</div>
+                <a href="https://www.google.com/search?q=climate+change+solutions" class="test-link" target="_blank">Test Query</a>
+            </div>
+
+            <div class="query-card">
+                <div class="query-title">Technology Ethics</div>
+                <div class="query-text">AI safety research</div>
+                <div class="query-description">Should prioritize responsible AI development</div>
+                <a href="https://www.google.com/search?q=AI+safety+research" class="test-link" target="_blank">Test Query</a>
+            </div>
+
+            <div class="query-card">
+                <div class="query-title">Community Building</div>
+                <div class="query-text">how to build community</div>
+                <div class="query-description">Should emphasize inclusive and sustainable approaches</div>
+                <a href="https://www.google.com/search?q=how+to+build+community" class="test-link" target="_blank">Test Query</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>✅ What to Look For</h2>
+        <div class="test-item">
+            <strong>EOQ Toggle Control:</strong>
+            <p>A floating control panel should appear on the right side of Google search pages with the EOQ toggle, info button, and comparison button.</p>
+        </div>
+        <div class="test-item">
+            <strong>Score Overlays:</strong>
+            <p>Each search result should display an EOQ score badge with expandable details showing the four component scores.</p>
+        </div>
+        <div class="test-item">
+            <strong>Reordered Results:</strong>
+            <p>Search results should be reordered based on EOQ scores, with position change indicators showing movement.</p>
+        </div>
+        <div class="test-item">
+            <strong>Comparison Panel:</strong>
+            <p>Clicking the comparison button should show a side-by-side view of EOQ vs traditional rankings with statistics.</p>
+        </div>
+        <div class="test-item">
+            <strong>Loading States:</strong>
+            <p>A loading overlay should appear while scores are being calculated, showing progress and completion status.</p>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>🐛 Troubleshooting</h2>
+        <div class="test-item">
+            <strong>Extension Not Appearing:</strong>
+            <p>Check that the extension is enabled in <code class="code">chrome://extensions/</code> and refresh the Google search page.</p>
+        </div>
+        <div class="test-item">
+            <strong>No Scores Showing:</strong>
+            <p>Verify your API key is valid or enable heuristic scoring. Check the browser console for error messages.</p>
+        </div>
+        <div class="test-item">
+            <strong>Performance Issues:</strong>
+            <p>Enable score caching in the extension settings and consider using heuristic scoring for faster results.</p>
+        </div>
+        <div class="test-item">
+            <strong>Debug Console:</strong>
+            <p>Open browser console and use <code class="code">window.EOQDebug</code> to access debugging functions.</p>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>📊 Expected Behavior</h2>
+        <div class="test-item">
+            <strong>High EOQ Scores (80%+):</strong>
+            <p>Educational resources, evidence-based health information, ethical business practices, scientific research, community-building content.</p>
+        </div>
+        <div class="test-item">
+            <strong>Medium EOQ Scores (40-79%):</strong>
+            <p>General informational content, commercial but ethical services, mainstream news sources, standard how-to guides.</p>
+        </div>
+        <div class="test-item">
+            <strong>Low EOQ Scores (0-39%):</strong>
+            <p>Get-rich-quick schemes, clickbait content, divisive political content, exploitative services, harmful misinformation.</p>
+        </div>
+    </div>
+
+    <script>
+        // Basic extension detection
+        function checkExtensionStatus() {
+            // Check if extension globals are available
+            setTimeout(() => {
+                const extensionStatus = document.getElementById('extension-status');
+                const apiStatus = document.getElementById('api-status');
+                const googleStatus = document.getElementById('google-status');
+
+                // This is a basic check - in a real scenario, you'd need to communicate with the extension
+                extensionStatus.textContent = 'Manual Check Required';
+                extensionStatus.className = 'status pending';
+
+                apiStatus.textContent = 'Check Extension Popup';
+                apiStatus.className = 'status pending';
+
+                googleStatus.textContent = 'Test on Google Search';
+                googleStatus.className = 'status pending';
+            }, 1000);
+        }
+
+        // Run checks when page loads
+        document.addEventListener('DOMContentLoaded', checkExtensionStatus);
+
+        // Add click tracking for test links
+        document.querySelectorAll('.test-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                console.log('Testing query:', this.previousElementSibling.previousElementSibling.textContent);
+            });
+        });
+    </script>
+</body>
+</html>

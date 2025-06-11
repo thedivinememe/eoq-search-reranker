@@ -1,0 +1,44 @@
+{
+  "manifest_version": 3,
+  "name": "EOQ Search Reranker",
+  "version": "1.0.0",
+  "description": "Re-rank search results to optimize for human flourishing using the Existence Optimization Quotient framework",
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://www.google.com/*",
+    "https://api.openai.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://www.google.com/search*"],
+      "js": [
+        "components/eoq-calculator.js",
+        "components/search-interceptor.js", 
+        "components/ui-injector.js",
+        "content-script.js"
+      ],
+      "css": ["styles/eoq-overlay.css"],
+      "run_at": "document_end"
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["styles/eoq-overlay.css"],
+      "matches": ["https://www.google.com/*"]
+    }
+  ]
+}

@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EOQ Sponsored Content Filter Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        
+        .test-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .test-section h2 {
+            color: #333;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .mock-result {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background: white;
+        }
+        
+        .mock-result.sponsored {
+            border-left: 4px solid #ff6b6b;
+            background-color: #fff5f5;
+        }
+        
+        .mock-result.organic {
+            border-left: 4px solid #51cf66;
+            background-color: #f8fff8;
+        }
+        
+        .result-title {
+            font-size: 18px;
+            color: #1a0dab;
+            text-decoration: none;
+            font-weight: normal;
+        }
+        
+        .result-title:hover {
+            text-decoration: underline;
+        }
+        
+        .result-url {
+            color: #006621;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+        
+        .result-snippet {
+            color: #545454;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .sponsored-label {
+            background: #ff6b6b;
+            color: white;
+            padding: 2px 6px;
+            font-size: 11px;
+            border-radius: 3px;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+        
+        .test-controls {
+            background: #e9ecef;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .control-group {
+            margin-bottom: 15px;
+        }
+        
+        .control-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .btn:hover {
+            background: #5a6fd8;
+        }
+        
+        .btn.secondary {
+            background: #6c757d;
+        }
+        
+        .btn.secondary:hover {
+            background: #5a6268;
+        }
+        
+        .status-message {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .status-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status-message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .debug-info {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .stat-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-header">
+        <h1>🔍 EOQ Sponsored Content Filter Test</h1>
+        <p>Test the improved sponsored content detection and filtering logic</p>
+    </div>
+
+    <div class="test-controls">
+        <h2>Test Controls</h2>
+        
+        <div class="control-group">
+            <label>
+                <input type="checkbox" id="debug-mode" checked> Enable Debug Mode
+            </label>
+            <small>Shows detailed logging and detection reasoning</small>
+        </div>
+        
+        <div class="control-group">
+            <label>
+                <input type="checkbox" id="hide-sponsored" checked> Hide Sponsored Results
+            </label>
+            <small>Removes sponsored content from view</small>
+        </div>
+        
+        <div class="control-group">
+            <button class="btn" onclick="runDetectionTest()">Run Detection Test</button>
+            <button class="btn secondary" onclick="clearResults()">Clear Results</button>
+            <button class="btn secondary" onclick="showDebugInfo()">Show Debug Info</button>
+        </div>
+        
+        <div id="status-messages"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>📊 Test Statistics</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="total-results">0</div>
+                <div class="stat-label">Total Results</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="sponsored-detected">0</div>
+                <div class="stat-label">Sponsored Detected</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="organic-results">0</div>
+                <div class="stat-label">Organic Results</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="accuracy-rate">0%</div>
+                <div class="stat-label">Detection Accuracy</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>🧪 Mock Search Results</h2>
+        <p>These mock results test various sponsored content detection scenarios:</p>
+        
+        <div id="mock-results">
+            <!-- Clearly sponsored results -->
+            <div class="mock-result sponsored g" data-expected="sponsored">
+                <div class="sponsored-label">Sponsored</div>
+                <h3><a href="https://example.com/ad1" class="result-title">Best Online Marketing Course - Start Today!</a></h3>
+                <div class="result-url">https://example.com/ad1</div>
+                <div class="result-snippet">Learn digital marketing from industry experts. Special discount available now. Start your career transformation today!</div>
+            </div>
+
+            <!-- Organic result that might be misidentified -->
+            <div class="mock-result organic g" data-expected="organic">
+                <h3><a href="https://wikipedia.org/marketing" class="result-title">Digital Marketing - Wikipedia</a></h3>
+                <div class="result-url">https://en.wikipedia.org/wiki/Digital_marketing</div>
+                <div class="result-snippet">Digital marketing is the component of marketing that utilizes internet and online based digital technologies such as desktop computers, mobile phones...</div>
+            </div>
+
+            <!-- Shopping ad -->
+            <div class="mock-result sponsored g commercial-unit-desktop-top" data-expected="sponsored">
+                <div class="sponsored-label">Ad</div>
+                <h3><a href="https://shop.example.com/product" class="result-title">Premium Headphones - 50% Off</a></h3>
+                <div class="result-url">https://shop.example.com/product</div>
+                <div class="result-snippet">High-quality wireless headphones with noise cancellation. Free shipping on orders over $50.</div>
+            </div>
+
+            <!-- Organic educational content -->
+            <div class="mock-result organic g" data-expected="organic">
+                <h3><a href="https://university.edu/course" class="result-title">Introduction to Marketing Principles | University Course</a></h3>
+                <div class="result-url">https://university.edu/marketing/course</div>
+                <div class="result-snippet">Comprehensive course covering fundamental marketing concepts, consumer behavior, and strategic planning. Academic credit available.</div>
+            </div>
+
+            <!-- Google Ads result -->
+            <div class="mock-result sponsored g ads-ad" data-expected="sponsored">
+                <div class="sponsored-label">Ad</div>
+                <h3><a href="https://googleadservices.com/pagead/aclk?sa=L&ai=..." class="result-title">Professional Marketing Services</a></h3>
+                <div class="result-url">https://marketingpro.com</div>
+                <div class="result-snippet">Boost your business with our proven marketing strategies. Free consultation available.</div>
+            </div>
+
+            <!-- Organic news article -->
+            <div class="mock-result organic g" data-expected="organic">
+                <h3><a href="https://news.com/marketing-trends" class="result-title">2024 Marketing Trends: What Experts Predict</a></h3>
+                <div class="result-url">https://news.com/business/marketing-trends-2024</div>
+                <div class="result-snippet">Industry analysts share insights on emerging marketing trends, including AI integration and personalization strategies.</div>
+            </div>
+
+            <!-- Promoted content -->
+            <div class="mock-result sponsored g" data-expected="sponsored" data-text-ad="true">
+                <div class="sponsored-label">Promoted</div>
+                <h3><a href="https://promoted.example.com" class="result-title">Advanced Marketing Analytics Platform</a></h3>
+                <div class="result-url">https://promoted.example.com</div>
+                <div class="result-snippet">Track your marketing ROI with our comprehensive analytics dashboard. Try free for 30 days.</div>
+            </div>
+
+            <!-- Organic blog post -->
+            <div class="mock-result organic g" data-expected="organic">
+                <h3><a href="https://blog.example.com/marketing-tips" class="result-title">10 Essential Marketing Tips for Small Businesses</a></h3>
+                <div class="result-url">https://blog.example.com/marketing-tips</div>
+                <div class="result-snippet">Practical marketing advice for entrepreneurs and small business owners. Learn cost-effective strategies that actually work.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>🐛 Debug Information</h2>
+        <div id="debug-output" class="debug-info">
+            Click "Show Debug Info" to see detailed detection logic...
+        </div>
+    </div>
+
+    <script>
+        // Mock SearchInterceptor for testing
+        class MockSearchInterceptor {
+            constructor() {
+                this.debugMode = true;
+                this.hideSponsoredResults = true;
+                this.sponsoredResults = [];
+                this.debugLog = [];
+            }
+
+            log(message) {
+                this.debugLog.push(`[${new Date().toLocaleTimeString()}] ${message}`);
+                if (this.debugMode) {
+                    console.log('EOQ Debug:', message);
+                }
+            }
+
+            // Updated sponsored detection logic (same as the fixed version)
+            isSponsoredResult(element) {
+                try {
+                    if (!element || !element.isConnected) return false;
+
+                    // First check for definitive ad indicators - data attributes
+                    const definitiveAdAttributes = ['data-text-ad', 'data-ad-slot', 'data-google-av-cxn'];
+                    const hasDefinitiveAdAttribute = definitiveAdAttributes.some(attr => 
+                        element.hasAttribute(attr) || element.querySelector(`[${attr}]`)
+                    );
+
+                    if (hasDefinitiveAdAttribute) {
+                        this.log('Sponsored result detected via data attribute');
+                        return true;
+                    }
+
+                    // Check for definitive sponsored CSS classes (very specific)
+                    const definitiveAdClasses = [
+                        'ads-ad', 'commercial-unit-desktop-top', 'pla-unit', 
+                        'shopping-carousel', 'mnr-c', 'rhsvw'
+                    ];
+
+                    const hasDefinitiveClass = definitiveAdClasses.some(className => 
+                        element.classList.contains(className)
+                    );
+
+                    if (hasDefinitiveClass) {
+                        this.log(`Sponsored result detected via CSS class: ${element.className}`);
+                        return true;
+                    }
+
+                    // Check for Google Ads URL patterns (very specific)
+                    const links = element.querySelectorAll('a[href]');
+                    for (const link of links) {
+                        const href = link.href || '';
+                        if (href.includes('googleadservices.com') || 
+                            href.includes('googlesyndication.com') ||
+                            href.includes('/aclk?sa=') ||
+                            (href.includes('/url?') && href.includes('adurl='))) {
+                            this.log(`Sponsored result detected via URL pattern: ${href.substring(0, 100)}`);
+                            return true;
+                        }
+                    }
+
+                    // Check for sponsored text indicators - but only in specific locations
+                    const sponsoredTextIndicators = [
+                        'sponsored', 'advertisement', 'promoted'
+                    ];
+
+                    // Only check in small text elements that are likely ad labels
+                    const adLabelSelectors = [
+                        '.ads-visurl', '.ad-label', '.sponsored-label', 
+                        '[aria-label*="Ad"]', '[title*="Ad"]'
+                    ];
+
+                    for (const selector of adLabelSelectors) {
+                        const labelElement = element.querySelector(selector);
+                        if (labelElement) {
+                            const labelText = labelElement.textContent.toLowerCase();
+                            if (sponsoredTextIndicators.some(indicator => labelText.includes(indicator))) {
+                                this.log(`Sponsored result detected via label text: ${labelText}`);
+                                return true;
+                            }
+                        }
+                    }
+
+                    // Check immediate parent for ad container (only 1 level up)
+                    const parent = element.parentElement;
+                    if (parent) {
+                        const parentId = parent.id?.toLowerCase() || '';
+                        const parentClasses = Array.from(parent.classList).join(' ').toLowerCase();
+                        
+                        if (parentId.includes('tads') || parentId.includes('bottomads') ||
+                            parentClasses.includes('ads-ad') || parentClasses.includes('commercial-unit')) {
+                            this.log('Sponsored result detected via parent container');
+                            return true;
+                        }
+                    }
+
+                    return false;
+                } catch (error) {
+                    this.log(`Error checking if result is sponsored: ${error.message}`);
+                    return false;
+                }
+            }
+
+            testDetection() {
+                const results = document.querySelectorAll('.mock-result');
+                let totalResults = 0;
+                let sponsoredDetected = 0;
+                let correctDetections = 0;
+                
+                this.debugLog = [];
+                this.sponsoredResults = [];
+
+                results.forEach((element, index) => {
+                    totalResults++;
+                    const expected = element.dataset.expected;
+                    const isSponsored = this.isSponsoredResult(element);
+                    
+                    this.log(`Result ${index + 1}: Expected=${expected}, Detected=${isSponsored ? 'sponsored' : 'organic'}`);
+                    
+                    if (isSponsored) {
+                        sponsoredDetected++;
+                        this.sponsoredResults.push({
+                            element: element,
+                            title: element.querySelector('.result-title')?.textContent || 'Unknown'
+                        });
+                        
+                        if (this.hideSponsoredResults) {
+                            element.style.display = 'none';
+                            element.classList.add('eoq-hidden-sponsored');
+                        }
+                    } else {
+                        element.style.display = 'block';
+                        element.classList.remove('eoq-hidden-sponsored');
+                    }
+                    
+                    // Check if detection was correct
+                    if ((expected === 'sponsored' && isSponsored) || 
+                        (expected === 'organic' && !isSponsored)) {
+                        correctDetections++;
+                    }
+                });
+
+                const accuracy = totalResults > 0 ? (correctDetections / totalResults * 100).toFixed(1) : 0;
+                
+                // Update statistics
+                document.getElementById('total-results').textContent = totalResults;
+                document.getElementById('sponsored-detected').textContent = sponsoredDetected;
+                document.getElementById('organic-results').textContent = totalResults - sponsoredDetected;
+                document.getElementById('accuracy-rate').textContent = accuracy + '%';
+                
+                // Show status message
+                const statusContainer = document.getElementById('status-messages');
+                const accuracy_num = parseFloat(accuracy);
+                let statusClass = 'info';
+                let statusText = `Detection completed: ${correctDetections}/${totalResults} correct (${accuracy}% accuracy)`;
+                
+                if (accuracy_num >= 90) {
+                    statusClass = 'success';
+                    statusText = `✅ Excellent detection accuracy: ${accuracy}%`;
+                } else if (accuracy_num >= 70) {
+                    statusClass = 'info';
+                    statusText = `ℹ️ Good detection accuracy: ${accuracy}%`;
+                } else {
+                    statusClass = 'error';
+                    statusText = `⚠️ Detection accuracy needs improvement: ${accuracy}%`;
+                }
+                
+                statusContainer.innerHTML = `<div class="status-message ${statusClass}">${statusText}</div>`;
+                
+                this.log(`Test completed: ${correctDetections}/${totalResults} correct detections (${accuracy}% accuracy)`);
+                
+                return {
+                    totalResults,
+                    sponsoredDetected,
+                    organicResults: totalResults - sponsoredDetected,
+                    accuracy: accuracy_num,
+                    correctDetections
+                };
+            }
+        }
+
+        // Initialize mock interceptor
+        const mockInterceptor = new MockSearchInterceptor();
+
+        // Event handlers
+        function runDetectionTest() {
+            const debugMode = document.getElementById('debug-mode').checked;
+            const hideSponsoredResults = document.getElementById('hide-sponsored').checked;
+            
+            mockInterceptor.debugMode = debugMode;
+            mockInterceptor.hideSponsoredResults = hideSponsoredResults;
+            
+            const results = mockInterceptor.testDetection();
+            
+            // Show success message
+            const statusContainer = document.getElementById('status-messages');
+            statusContainer.innerHTML += `<div class="status-message info">Test run completed at ${new Date().toLocaleTimeString()}</div>`;
+        }
+
+        function clearResults() {
+            // Reset all results to visible
+            document.querySelectorAll('.mock-result').forEach(element => {
+                element.style.display = 'block';
+                element.classList.remove('eoq-hidden-sponsored');
+            });
+            
+            // Clear statistics
+            document.getElementById('total-results').textContent = '0';
+            document.getElementById('sponsored-detected').textContent = '0';
+            document.getElementById('organic-results').textContent = '0';
+            document.getElementById('accuracy-rate').textContent = '0%';
+            
+            // Clear status messages
+            document.getElementById('status-messages').innerHTML = '';
+            document.getElementById('debug-output').textContent = 'Debug log cleared...';
+            
+            mockInterceptor.debugLog = [];
+        }
+
+        function showDebugInfo() {
+            const debugOutput = document.getElementById('debug-output');
+            if (mockInterceptor.debugLog.length === 0) {
+                debugOutput.textContent = 'No debug information available. Run a detection test first.';
+            } else {
+                debugOutput.textContent = mockInterceptor.debugLog.join('\n');
+            }
+        }
+
+        // Auto-run test on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                runDetectionTest();
+            }, 500);
+        });
+
+        // Update settings when checkboxes change
+        document.getElementById('debug-mode').addEventListener('change', function() {
+            mockInterceptor.debugMode = this.checked;
+        });
+
+        document.getElementById('hide-sponsored').addEventListener('change', function() {
+            mockInterceptor.hideSponsoredResults = this.checked;
+            runDetectionTest(); // Re-run test with new setting
+        });
+    </script>
+</body>
+</html>

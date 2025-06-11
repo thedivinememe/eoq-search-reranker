@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EOQ Search Reranker</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <!-- Header -->
+    <div class="popup-header">
+      <div class="header-content">
+        <span class="logo">🌟</span>
+        <div class="title-section">
+          <h1>EOQ Search Reranker</h1>
+          <p class="subtitle">Optimizing for Human Flourishing</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- API Key Section -->
+    <div class="section api-key-section">
+      <h2>
+        <span class="section-icon">🔑</span>
+        OpenAI API Configuration
+      </h2>
+      <div class="input-group">
+        <label for="api-key">API Key:</label>
+        <div class="input-wrapper">
+          <input type="password" id="api-key" placeholder="sk-..." autocomplete="off">
+          <button id="toggle-visibility" class="toggle-btn" title="Show/Hide API Key">👁️</button>
+        </div>
+        <div class="input-actions">
+          <button id="save-key" class="primary-btn">Save Key</button>
+          <button id="test-key" class="secondary-btn">Test Connection</button>
+        </div>
+        <div id="api-status" class="status-message" style="display: none;"></div>
+      </div>
+    </div>
+
+    <!-- Session Stats Section -->
+    <div class="section stats-section">
+      <h2>
+        <span class="section-icon">📊</span>
+        Session Statistics
+      </h2>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" id="search-count">0</div>
+          <div class="stat-label">Searches Enhanced</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="results-scored">0</div>
+          <div class="stat-label">Results Scored</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="avg-improvement">0%</div>
+          <div class="stat-label">Avg EOQ Score</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- API Diagnostics Section -->
+    <div class="section diagnostics-section">
+      <h2>
+        <span class="section-icon">🔍</span>
+        API Diagnostics
+      </h2>
+      <div class="diagnostic-info">
+        <div class="scoring-method">
+          <span class="method-label">Current Scoring Method:</span>
+          <span id="scoring-method" class="method-value">Unknown</span>
+        </div>
+        <div class="api-failures" id="api-failures" style="display: none;">
+          <h4>API Failure Breakdown:</h4>
+          <div class="failure-stats">
+            <div class="failure-item">
+              <span class="failure-icon">🚫</span>
+              <span class="failure-label">Rate Limits:</span>
+              <span id="rate-limit-count" class="failure-count">0</span>
+            </div>
+            <div class="failure-item">
+              <span class="failure-icon">🔐</span>
+              <span class="failure-label">Auth Errors:</span>
+              <span id="auth-error-count" class="failure-count">0</span>
+            </div>
+            <div class="failure-item">
+              <span class="failure-icon">🌐</span>
+              <span class="failure-label">Network Issues:</span>
+              <span id="network-error-count" class="failure-count">0</span>
+            </div>
+            <div class="failure-item">
+              <span class="failure-icon">📝</span>
+              <span class="failure-label">Parse Errors:</span>
+              <span id="parse-error-count" class="failure-count">0</span>
+            </div>
+            <div class="failure-item">
+              <span class="failure-icon">❓</span>
+              <span class="failure-label">Other Errors:</span>
+              <span id="other-error-count" class="failure-count">0</span>
+            </div>
+          </div>
+          <div class="failure-recommendations" id="failure-recommendations"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EOQ Information Section -->
+    <div class="section info-section">
+      <h2>
+        <span class="section-icon">🧠</span>
+        What is EOQ?
+      </h2>
+      <p class="info-description">
+        The Existence Optimization Quotient measures content based on its potential to promote human flourishing across four key dimensions:
+      </p>
+      <div class="eoq-dimensions">
+        <div class="dimension">
+          <div class="dimension-header">
+            <span class="dimension-icon">❤️</span>
+            <span class="dimension-name">Empathy</span>
+            <span class="dimension-weight">40%</span>
+          </div>
+          <p class="dimension-description">
+            Considers collective benefit, care for others, and promotes wellbeing for all
+          </p>
+          <div class="dimension-breakdown">
+            <div class="breakdown-item">
+              <span class="breakdown-icon">🥇</span>
+              <span class="breakdown-text">Golden Rule: Reciprocity</span>
+            </div>
+            <div class="breakdown-item">
+              <span class="breakdown-icon">🥈</span>
+              <span class="breakdown-text">Silver Rule: Non-harm</span>
+            </div>
+            <div class="breakdown-item">
+              <span class="breakdown-icon">🏆</span>
+              <span class="breakdown-text">Platinum Rule: Other-centeredness</span>
+            </div>
+            <div class="breakdown-item">
+              <span class="breakdown-icon">💝</span>
+              <span class="breakdown-text">Universal Love: Collective care</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="dimension">
+          <div class="dimension-header">
+            <span class="dimension-icon">🎯</span>
+            <span class="dimension-name">Certainty Management</span>
+            <span class="dimension-weight">25%</span>
+          </div>
+          <p class="dimension-description">
+            Appropriately handles uncertainty, acknowledges limitations, and avoids false certainty
+          </p>
+        </div>
+
+        <div class="dimension">
+          <div class="dimension-header">
+            <span class="dimension-icon">🌉</span>
+            <span class="dimension-name">Boundary Permeability</span>
+            <span class="dimension-weight">20%</span>
+          </div>
+          <p class="dimension-description">
+            Builds bridges rather than creating divisions, promotes understanding across differences
+          </p>
+        </div>
+
+        <div class="dimension">
+          <div class="dimension-header">
+            <span class="dimension-icon">🌱</span>
+            <span class="dimension-name">Refinement Velocity</span>
+            <span class="dimension-weight">15%</span>
+          </div>
+          <p class="dimension-description">
+            Promotes learning, growth, and positive development rather than stagnation
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Section -->
+    <div class="section settings-section">
+      <h2>
+        <span class="section-icon">⚙️</span>
+        Settings
+      </h2>
+      <div class="setting-item">
+        <label class="setting-label">
+          <input type="checkbox" id="enable-eoq" checked>
+          <span class="checkmark"></span>
+          <span class="setting-text">Enable EOQ Ranking</span>
+        </label>
+        <div class="setting-description">Automatically reorder search results based on EOQ scores</div>
+      </div>
+
+      <div class="setting-item">
+        <label class="setting-label">
+          <input type="checkbox" id="show-overlays" checked>
+          <span class="checkmark"></span>
+          <span class="setting-text">Show Score Overlays</span>
+        </label>
+        <div class="setting-description">Display EOQ scores and breakdowns on search results</div>
+      </div>
+
+      <div class="setting-item">
+        <label class="setting-label">
+          <input type="checkbox" id="hide-sponsored" checked>
+          <span class="checkmark"></span>
+          <span class="setting-text">Hide Sponsored Results</span>
+        </label>
+        <div class="setting-description">Remove sponsored/advertisement results to focus on organic content that promotes human flourishing</div>
+      </div>
+
+      <div class="setting-item">
+        <label class="setting-label">
+          <input type="checkbox" id="debug-mode">
+          <span class="checkmark"></span>
+          <span class="setting-text">Debug Mode</span>
+        </label>
+        <div class="setting-description">Show detailed logging and visual indicators for sponsored content detection</div>
+      </div>
+
+      <div class="setting-item">
+        <label class="setting-label">
+          <input type="checkbox" id="cache-scores" checked>
+          <span class="checkmark"></span>
+          <span class="setting-text">Cache Scores Locally</span>
+        </label>
+        <div class="setting-description">Store calculated EOQ scores to reduce API usage and improve performance</div>
+      </div>
+    </div>
+
+    <!-- Actions Section -->
+    <div class="section actions-section">
+      <h2>
+        <span class="section-icon">🔧</span>
+        Actions
+      </h2>
+      <div class="action-buttons">
+        <button id="clear-cache" class="action-btn">
+          <span class="btn-icon">🗑️</span>
+          Clear Cache
+        </button>
+        <button id="export-data" class="action-btn">
+          <span class="btn-icon">📤</span>
+          Export Data
+        </button>
+        <button id="reset-stats" class="action-btn">
+          <span class="btn-icon">🔄</span>
+          Reset Stats
+        </button>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="popup-footer">
+      <div class="footer-links">
+        <a href="#" id="about-link">About EOQ</a>
+        <a href="#" id="privacy-link">Privacy</a>
+        <a href="#" id="support-link">Support</a>
+      </div>
+      <div class="version-info">
+        <span>Version 1.0.0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loading-overlay" class="loading-overlay" style="display: none;">
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <p id="loading-text">Processing...</p>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
