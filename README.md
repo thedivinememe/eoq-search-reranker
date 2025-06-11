@@ -68,7 +68,6 @@ The extension will be available on the Chrome Web Store once approved.
 1. **Get an API Key**
    - Visit [OpenAI API Keys](https://platform.openai.com/api-keys)
    - Create a new API key
-   - Ensure you have GPT-4 access for best results
 
 2. **Configure the Extension**
    - Click the EOQ extension icon
@@ -353,7 +352,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- OpenAI for providing the GPT-4 API for content analysis
+- OpenAI for providing the GPT API for content analysis
 - The Chrome Extensions team for the robust platform
 - Contributors to the EOQ framework development
 - Beta testers and early adopters providing feedback
