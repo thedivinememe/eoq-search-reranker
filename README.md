@@ -15,7 +15,7 @@ The Existence Optimization Quotient (EOQ) evaluates content across four key dime
 
 ### Core Functionality
 - **Intelligent Reranking**: Automatically reorders Google search results based on EOQ scores
-- **AI-Powered Analysis**: Uses OpenAI's GPT-4 for sophisticated content evaluation
+- **AI-Powered Analysis**: Uses OpenAI's GPT-4o-mini for quick, sophisticated content evaluation
 - **Heuristic Fallback**: Works without API key using rule-based scoring
 - **Real-time Processing**: Scores and reorders results as you search
 
