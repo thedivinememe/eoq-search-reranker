@@ -38,7 +38,7 @@ The Existence Optimization Quotient (EOQ) evaluates content across four key dime
 
 1. **Download the Extension**
    ```bash
-   git clone https://github.com/your-repo/eoq-search-reranker.git
+   git clone https://github.com/thedivinememe/eoq-search-reranker.git
    cd eoq-search-reranker
    ```
 
