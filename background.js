@@ -25,6 +25,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       sendResponse({ apiKey: result.apiKey });
     });
     return true; // Keep message channel open for async response
+  } else if (request.action === 'fetchContent') {
+    // Handle content fetching for the ContentFetcher
+    fetchContentForExtension(request.url)
+      .then(content => {
+        sendResponse({ success: true, content });
+      })
+      .catch(error => {
+        sendResponse({ success: false, error: error.message });
+      });
+    return true; // Keep message channel open for async response
   }
 });
 
@@ -53,6 +63,39 @@ function updateSessionStats(data) {
     
     chrome.storage.sync.set({ sessionStats: stats });
   });
+}
+
+// Content fetching function for the extension
+async function fetchContentForExtension(url) {
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; EOQ-Extension/1.0)',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Accept-Encoding': 'gzip, deflate',
+        'Cache-Control': 'no-cache'
+      },
+      credentials: 'omit'
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    const content = await response.text();
+    
+    if (!content || content.length < 100) {
+      throw new Error('Insufficient content retrieved');
+    }
+
+    return content;
+    
+  } catch (error) {
+    console.warn('Background content fetch failed:', error);
+    throw error;
+  }
 }
 
 // Handle tab updates to reset state if needed

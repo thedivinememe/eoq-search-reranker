@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EOQ Error-Free Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .loaded { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        
+        .test-button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        .test-button:hover {
+            background: #218838;
+        }
+        
+        .result {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border-left: 4px solid #28a745;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        
+        .error-result {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .success {
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .warning {
+            color: #ffc107;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>✅ EOQ Error-Free Test Suite</h1>
+        <p>Testing components with mock data to avoid network errors</p>
+    </div>
+
+    <div class="section">
+        <h3>Component Status</h3>
+        <div>Domain Reputation: <span id="domain-status" class="status error">Not Loaded</span></div>
+        <div>Content Fetcher: <span id="fetcher-status" class="status error">Not Loaded</span></div>
+        <div>Content Enhancer: <span id="enhancer-status" class="status error">Not Loaded</span></div>
+        <div>EOQ Calculator: <span id="calculator-status" class="status error">Not Loaded</span></div>
+    </div>
+
+    <div class="section">
+        <h3>Clean Tests (No Network Calls)</h3>
+        <button class="test-button" onclick="testComponentLoading()">Test Component Loading</button>
+        <button class="test-button" onclick="testDomainAnalysis()">Test Domain Analysis</button>
+        <button class="test-button" onclick="testMetadataEnhancement()">Test Metadata Enhancement</button>
+        <button class="test-button" onclick="testFullPipeline()">Test Full Pipeline</button>
+        <div id="test-results"></div>
+    </div>
+
+    <!-- Load components -->
+    <script src="../components/domain-reputation.js"></script>
+    <script src="../components/content-fetcher.js"></script>
+    <script src="../components/content-enhancer.js"></script>
+    <script src="../components/eoq-calculator.js"></script>
+
+    <script>
+        // Mock search results for testing
+        const mockResults = [
+            {
+                title: "How to Build Empathy in Your Community - Research Guide",
+                url: "https://stanford.edu/psychology/empathy-research",
+                snippet: "Learn evidence-based strategies for fostering empathy and understanding in diverse communities. This comprehensive guide covers research findings and practical applications.",
+                originalPosition: 1
+            },
+            {
+                title: "Get Rich Quick - Secret Method Revealed!",
+                url: "https://quick-money-scam.tk/secret-method",
+                snippet: "Discover the secret method that guarantees instant wealth! No work required, just follow our simple steps.",
+                originalPosition: 2
+            },
+            {
+                title: "Climate Change Solutions: A Balanced Perspective",
+                url: "https://nature.org/climate-solutions",
+                snippet: "Exploring various approaches to climate change mitigation, considering different viewpoints and evidence-based solutions for collective action.",
+                originalPosition: 3
+            }
+        ];
+
+        function updateStatus(elementId, isLoaded) {
+            const element = document.getElementById(elementId);
+            if (isLoaded) {
+                element.textContent = 'Loaded';
+                element.className = 'status loaded';
+            } else {
+                element.textContent = 'Error';
+                element.className = 'status error';
+            }
+        }
+
+        function checkComponents() {
+            updateStatus('domain-status', typeof DomainReputation !== 'undefined');
+            updateStatus('fetcher-status', typeof ContentFetcher !== 'undefined');
+            updateStatus('enhancer-status', typeof ContentEnhancer !== 'undefined');
+            updateStatus('calculator-status', typeof EOQCalculator !== 'undefined');
+        }
+
+        function addResult(message, type = 'success') {
+            const resultsDiv = document.getElementById('test-results');
+            const div = document.createElement('div');
+            div.className = type === 'error' ? 'error-result' : 'result';
+            
+            if (type === 'success') {
+                div.innerHTML = '<span class="success">✓</span> ' + message;
+            } else if (type === 'warning') {
+                div.innerHTML = '<span class="warning">⚠</span> ' + message;
+            } else {
+                div.innerHTML = '<span style="color: #dc3545;">✗</span> ' + message;
+            }
+            
+            resultsDiv.appendChild(div);
+        }
+
+        function clearResults() {
+            document.getElementById('test-results').innerHTML = '';
+        }
+
+        function testComponentLoading() {
+            clearResults();
+            
+            try {
+                checkComponents();
+                addResult('Component status updated');
+                
+                // Test instantiation
+                if (typeof DomainReputation !== 'undefined') {
+                    const domainRep = new DomainReputation();
+                    addResult('DomainReputation instance created');
+                } else {
+                    addResult('DomainReputation not available', 'error');
+                }
+                
+                if (typeof ContentFetcher !== 'undefined') {
+                    const fetcher = new ContentFetcher();
+                    addResult('ContentFetcher instance created');
+                } else {
+                    addResult('ContentFetcher not available', 'error');
+                }
+                
+                if (typeof ContentEnhancer !== 'undefined') {
+                    const enhancer = new ContentEnhancer();
+                    addResult('ContentEnhancer instance created');
+                } else {
+                    addResult('ContentEnhancer not available', 'error');
+                }
+                
+                if (typeof EOQCalculator !== 'undefined') {
+                    const calculator = new EOQCalculator(null);
+                    addResult('EOQCalculator instance created');
+                } else {
+                    addResult('EOQCalculator not available', 'error');
+                }
+                
+            } catch (error) {
+                addResult('Component loading test failed: ' + error.message, 'error');
+            }
+        }
+
+        function testDomainAnalysis() {
+            clearResults();
+            
+            try {
+                if (typeof DomainReputation === 'undefined') {
+                    throw new Error('DomainReputation not loaded');
+                }
+                
+                const domainRep = new DomainReputation();
+                addResult('DomainReputation initialized');
+                
+                // Test domain extraction
+                const testUrls = [
+                    'https://stanford.edu/psychology/empathy-research',
+                    'https://quick-money-scam.tk/secret-method',
+                    'https://nature.org/climate-solutions'
+                ];
+                
+                testUrls.forEach(url => {
+                    const domain = domainRep.extractDomain(url);
+                    addResult(`Domain extracted: ${url} → ${domain}`);
+                });
+                
+                // Test reputation scoring
+                const testDomains = ['stanford.edu', 'quick-money-scam.tk', 'nature.org'];
+                testDomains.forEach(domain => {
+                    const reputation = domainRep.getDomainReputation(domain);
+                    addResult(`Reputation for ${domain}: score=${reputation.score.toFixed(3)}, category=${reputation.category}`);
+                });
+                
+            } catch (error) {
+                addResult('Domain analysis test failed: ' + error.message, 'error');
+            }
+        }
+
+        async function testMetadataEnhancement() {
+            clearResults();
+            
+            try {
+                if (typeof ContentEnhancer === 'undefined') {
+                    throw new Error('ContentEnhancer not loaded');
+                }
+                
+                const enhancer = new ContentEnhancer();
+                addResult('ContentEnhancer initialized');
+                
+                for (const result of mockResults) {
+                    try {
+                        addResult(`Testing metadata enhancement for: "${result.title}"`);
+                        
+                        // Test metadata analysis directly (no network calls)
+                        const metadataEnhancement = await enhancer.analyzeMetadata(result);
+                        
+                        addResult(`Method: ${metadataEnhancement.method}, Confidence: ${metadataEnhancement.confidence.toFixed(2)}`);
+                        addResult(`Content Type: ${metadataEnhancement.contentType}, Domain Rep: ${metadataEnhancement.domainReputation.toFixed(3)}`);
+                        
+                        const adjustmentStr = Object.entries(metadataEnhancement.adjustments)
+                            .map(([key, value]) => `${key}: ${value >= 0 ? '+' : ''}${value.toFixed(3)}`)
+                            .join(', ');
+                        addResult(`Adjustments: ${adjustmentStr}`);
+                        
+                        addResult('---');
+                        
+                    } catch (enhanceError) {
+                        addResult(`Enhancement failed for "${result.title}": ${enhanceError.message}`, 'error');
+                    }
+                }
+                
+            } catch (error) {
+                addResult('Metadata enhancement test failed: ' + error.message, 'error');
+            }
+        }
+
+        async function testFullPipeline() {
+            clearResults();
+            
+            try {
+                if (typeof ContentEnhancer === 'undefined') {
+                    throw new Error('ContentEnhancer not loaded');
+                }
+                
+                const enhancer = new ContentEnhancer();
+                addResult('Testing full enhancement pipeline (metadata only, no content fetching)');
+                
+                for (const result of mockResults) {
+                    try {
+                        addResult(`Processing: "${result.title}"`);
+                        
+                        // Force metadata-only enhancement by setting originalPosition > 5
+                        const testResult = { ...result, originalPosition: 10 };
+                        const enhancement = await enhancer.enhanceResult(testResult);
+                        
+                        addResult(`✓ Enhancement completed - Method: ${enhancement.method}`);
+                        addResult(`  Confidence: ${enhancement.confidence.toFixed(2)}`);
+                        
+                        if (enhancement.adjustments) {
+                            const adjustmentStr = Object.entries(enhancement.adjustments)
+                                .map(([key, value]) => `${key}: ${value >= 0 ? '+' : ''}${value.toFixed(3)}`)
+                                .join(', ');
+                            addResult(`  Adjustments: ${adjustmentStr}`);
+                        }
+                        
+                        if (enhancement.error) {
+                            addResult(`  Warning: ${enhancement.error}`, 'warning');
+                        }
+                        
+                        addResult('---');
+                        
+                    } catch (enhanceError) {
+                        addResult(`Pipeline failed for "${result.title}": ${enhanceError.message}`, 'error');
+                    }
+                }
+                
+                addResult('Full pipeline test completed', 'success');
+                
+            } catch (error) {
+                addResult('Full pipeline test failed: ' + error.message, 'error');
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(checkComponents, 100);
+            console.log('EOQ Error-Free Test Suite loaded');
+        });
+    </script>
+</body>
+</html>

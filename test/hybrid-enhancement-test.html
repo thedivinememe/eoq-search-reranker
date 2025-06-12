@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EOQ Hybrid Content Enhancement Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .test-container {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .test-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        
+        .test-section h3 {
+            color: #333;
+            margin-top: 0;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .test-result {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border-left: 4px solid #28a745;
+        }
+        
+        .test-error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .test-warning {
+            background: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .test-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        
+        .test-button:hover {
+            background: #5a6fd8;
+        }
+        
+        .test-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .component-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .status-loaded {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-missing {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .test-data {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .mock-search-result {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            background: white;
+        }
+        
+        .mock-title {
+            color: #1a0dab;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .mock-url {
+            color: #006621;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .mock-snippet {
+            color: #545454;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .enhancement-display {
+            background: #f0f8ff;
+            border: 1px solid #b3d9ff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        
+        .enhancement-method {
+            font-weight: bold;
+            color: #0066cc;
+            margin-bottom: 10px;
+        }
+        
+        .enhancement-adjustments {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .adjustment-item {
+            background: white;
+            padding: 8px;
+            border-radius: 4px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        
+        .adjustment-value {
+            font-weight: bold;
+            font-size: 16px;
+            color: #333;
+        }
+        
+        .adjustment-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-header">
+        <h1>🧠 EOQ Hybrid Content Enhancement Test Suite</h1>
+        <p>Testing the integrated content fetching, domain reputation, and enhancement system</p>
+    </div>
+
+    <div class="test-container">
+        <div class="test-section">
+            <h3>Component Loading Status</h3>
+            <div id="component-status">
+                <div>Domain Reputation: <span id="domain-reputation-status" class="component-status status-missing">Not Loaded</span></div>
+                <div>Content Fetcher: <span id="content-fetcher-status" class="component-status status-missing">Not Loaded</span></div>
+                <div>Content Enhancer: <span id="content-enhancer-status" class="component-status status-missing">Not Loaded</span></div>
+                <div>EOQ Calculator: <span id="eoq-calculator-status" class="component-status status-missing">Not Loaded</span></div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>Domain Reputation System Test</h3>
+            <button class="test-button" onclick="testDomainReputation()">Test Domain Reputation</button>
+            <div id="domain-reputation-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Content Fetcher Test</h3>
+            <button class="test-button" onclick="testContentFetcher()">Test Content Fetching</button>
+            <div id="content-fetcher-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Content Enhancement Test</h3>
+            <button class="test-button" onclick="testContentEnhancement()">Test Content Enhancement</button>
+            <div id="content-enhancement-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Mock Search Results Enhancement</h3>
+            <button class="test-button" onclick="testMockResults()">Test Mock Search Results</button>
+            <div id="mock-results-container">
+                <!-- Mock search results will be inserted here -->
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>Integration Test</h3>
+            <button class="test-button" onclick="runIntegrationTest()">Run Full Integration Test</button>
+            <div id="integration-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Performance Metrics</h3>
+            <button class="test-button" onclick="runPerformanceTest()">Run Performance Test</button>
+            <div id="performance-results"></div>
+        </div>
+    </div>
+
+    <script>
+        // Test data
+        const mockSearchResults = [
+            {
+                title: "How to Build Empathy in Your Community",
+                url: "https://example.edu/empathy-guide",
+                snippet: "Learn evidence-based strategies for fostering empathy and understanding in your local community. Research shows that empathy can be developed through practice and mindful engagement."
+            },
+            {
+                title: "Get Rich Quick - Secret Method Revealed!",
+                url: "https://scam-site.com/get-rich-quick",
+                snippet: "Discover the secret method that guarantees instant wealth! No effort required, just follow our proven system and become rich overnight!"
+            },
+            {
+                title: "Climate Change: Understanding Uncertainty in Science",
+                url: "https://climate-science.org/uncertainty",
+                snippet: "Scientists discuss the role of uncertainty in climate research and how we can make informed decisions despite incomplete knowledge."
+            },
+            {
+                title: "Why [Political Party] is Destroying America",
+                url: "https://partisan-blog.com/destroy-america",
+                snippet: "The enemy party is ruining everything! They hate freedom and want to destroy our way of life. Fight back against these dangerous extremists!"
+            },
+            {
+                title: "Learning Programming: A Beginner's Journey",
+                url: "https://learn-code.org/beginners",
+                snippet: "Start your programming journey with patience and practice. This comprehensive guide covers fundamental concepts and provides resources for continued learning."
+            }
+        ];
+
+        // Component status tracking
+        let componentStatus = {
+            domainReputation: false,
+            contentFetcher: false,
+            contentEnhancer: false,
+            eoqCalculator: false
+        };
+
+        // Check component loading
+        function checkComponentStatus() {
+            // Check if classes are available
+            componentStatus.domainReputation = typeof DomainReputation !== 'undefined';
+            componentStatus.contentFetcher = typeof ContentFetcher !== 'undefined';
+            componentStatus.contentEnhancer = typeof ContentEnhancer !== 'undefined';
+            componentStatus.eoqCalculator = typeof EOQCalculator !== 'undefined';
+
+            // Update UI
+            updateStatusDisplay('domain-reputation-status', componentStatus.domainReputation);
+            updateStatusDisplay('content-fetcher-status', componentStatus.contentFetcher);
+            updateStatusDisplay('content-enhancer-status', componentStatus.contentEnhancer);
+            updateStatusDisplay('eoq-calculator-status', componentStatus.eoqCalculator);
+        }
+
+        function updateStatusDisplay(elementId, isLoaded) {
+            const element = document.getElementById(elementId);
+            if (isLoaded) {
+                element.textContent = 'Loaded';
+                element.className = 'component-status status-loaded';
+            } else {
+                element.textContent = 'Missing';
+                element.className = 'component-status status-error';
+            }
+        }
+
+        // Test domain reputation system
+        async function testDomainReputation() {
+            const resultsDiv = document.getElementById('domain-reputation-results');
+            resultsDiv.innerHTML = '<div class="test-result">Testing domain reputation system...</div>';
+
+            try {
+                if (!componentStatus.domainReputation) {
+                    throw new Error('DomainReputation class not available');
+                }
+
+                const domainRep = new DomainReputation();
+                
+                // Test domain extraction
+                const testUrls = [
+                    'https://example.edu/page',
+                    'https://scam-site.com/page',
+                    'https://wikipedia.org/article',
+                    'https://news.bbc.co.uk/article'
+                ];
+
+                let results = '<div class="test-result"><h4>Domain Extraction Test:</h4>';
+                testUrls.forEach(url => {
+                    const domain = domainRep.extractDomain(url);
+                    results += '<div>' + url + ' → ' + domain + '</div>';
+                });
+                results += '</div>';
+
+                // Test reputation scoring
+                results += '<div class="test-result"><h4>Reputation Scoring Test:</h4>';
+                const testDomains = ['example.edu', 'scam-site.com', 'wikipedia.org', 'unknown-domain.xyz'];
+                testDomains.forEach(domain => {
+                    const reputation = domainRep.getDomainReputation(domain);
+                    results += '<div>' + domain + ': ' + JSON.stringify(reputation) + '</div>';
+                });
+                results += '</div>';
+
+                // Test reputation updates
+                results += '<div class="test-result"><h4>Reputation Update Test:</h4>';
+                domainRep.updateReputationFromEOQ('test-domain.com', 0.8);
+                const updatedRep = domainRep.getDomainReputation('test-domain.com');
+                results += '<div>Updated test-domain.com with EOQ 0.8: ' + JSON.stringify(updatedRep) + '</div>';
+                results += '</div>';
+
+                resultsDiv.innerHTML = results;
+
+            } catch (error) {
+                resultsDiv.innerHTML = '<div class="test-error">Domain Reputation Test Failed: ' + error.message + '</div>';
+            }
+        }
+
+        // Test content fetcher
+        async function testContentFetcher() {
+            const resultsDiv = document.getElementById('content-fetcher-results');
+            resultsDiv.innerHTML = '<div class="test-result">Testing content fetcher...</div>';
+
+            try {
+                if (!componentStatus.contentFetcher) {
+                    throw new Error('ContentFetcher class not available');
+                }
+
+                const fetcher = new ContentFetcher();
+                
+                // Test with a simple URL (this will likely fail due to CORS, but we can test the structure)
+                const testUrl = 'https://example.com';
+                
+                let results = '<div class="test-result"><h4>Content Fetcher Structure Test:</h4>';
+                results += '<div>Fetcher initialized: ' + (!!fetcher) + '</div>';
+                results += '<div>Queue length: ' + fetcher.requestQueue.length + '</div>';
+                results += '<div>Active requests: ' + fetcher.activeRequests + '</div>';
+                results += '<div>Cache size: ' + fetcher.cache.size + '</div>';
+                results += '</div>';
+
+                // Test cache key generation
+                results += '<div class="test-result"><h4>Cache Key Generation Test:</h4>';
+                const testKey = fetcher.generateCacheKey(testUrl);
+                results += '<div>Cache key for ' + testUrl + ': ' + testKey + '</div>';
+                results += '</div>';
+
+                // Test content extraction with mock HTML
+                results += '<div class="test-result"><h4>Content Extraction Test:</h4>';
+                const mockHtml = '<html><head><title>Test Page</title></head><body><nav>Navigation</nav><main><h1>Main Content</h1><p>This is the main content of the page that should be extracted.</p><p>It contains multiple paragraphs with useful information.</p></main><aside>Sidebar content</aside><script>console.log("script");</script></body></html>';
+                
+                const extractedContent = fetcher.extractMainContent(mockHtml);
+                results += '<div>Extracted content length: ' + extractedContent.length + '</div>';
+                results += '<div class="test-data">Extracted content:\n' + extractedContent.substring(0, 200) + '...</div>';
+                results += '</div>';
+
+                resultsDiv.innerHTML = results;
+
+            } catch (error) {
+                resultsDiv.innerHTML = '<div class="test-error">Content Fetcher Test Failed: ' + error.message + '</div>';
+            }
+        }
+
+        // Test content enhancement
+        async function testContentEnhancement() {
+            const resultsDiv = document.getElementById('content-enhancement-results');
+            resultsDiv.innerHTML = '<div class="test-result">Testing content enhancement...</div>';
+
+            try {
+                if (!componentStatus.contentEnhancer) {
+                    throw new Error('ContentEnhancer class not available');
+                }
+
+                const enhancer = new ContentEnhancer();
+                
+                let results = '<div class="test-result"><h4>Content Enhancer Initialization:</h4>';
+                results += '<div>Enhancer initialized: ' + (!!enhancer) + '</div>';
+                results += '<div>Domain reputation available: ' + (!!enhancer.domainReputation) + '</div>';
+                results += '<div>Content fetcher available: ' + (!!enhancer.contentFetcher) + '</div>';
+                results += '</div>';
+
+                // Test enhancement with mock search results
+                results += '<div class="test-result"><h4>Enhancement Test Results:</h4>';
+                
+                for (let i = 0; i < Math.min(3, mockSearchResults.length); i++) {
+                    const result = mockSearchResults[i];
+                    try {
+                        const enhancement = await enhancer.enhanceResult(result);
+                        
+                        results += '<div class="enhancement-display">';
+                        results += '<div class="enhancement-method">Method: ' + enhancement.method + '</div>';
+                        results += '<div>Confidence: ' + enhancement.confidence.toFixed(2) + '</div>';
+                        results += '<div>Content Length: ' + (enhancement.contentLength || 'N/A') + '</div>';
+                        
+                        if (enhancement.adjustments) {
+                            results += '<div class="enhancement-adjustments">';
+                            Object.entries(enhancement.adjustments).forEach(([key, value]) => {
+                                const sign = value >= 0 ? '+' : '';
+                                results += '<div class="adjustment-item">';
+                                results += '<div class="adjustment-value">' + sign + value.toFixed(3) + '</div>';
+                                results += '<div class="adjustment-label">' + key + '</div>';
+                                results += '</div>';
+                            });
+                            results += '</div>';
+                        }
+                        
+                        results += '</div>';
+                        
+                    } catch (enhanceError) {
+                        results += '<div class="test-warning">Enhancement failed for "' + result.title + '": ' + enhanceError.message + '</div>';
+                    }
+                }
+                
+                results += '</div>';
+
+                resultsDiv.innerHTML = results;
+
+            } catch (error) {
+                resultsDiv.innerHTML = '<div class="test-error">Content Enhancement Test Failed: ' + error.message + '</div>';
+            }
+        }
+
+        // Test mock search results
+        async function testMockResults() {
+            const container = document.getElementById('mock-results-container');
+            container.innerHTML = '<div class="test-result">Processing mock search results...</div>';
+
+            try {
+                if (!componentStatus.eoqCalculator) {
+                    throw new Error('EOQCalculator class not available');
+                }
+
+                // Create calculator instance (without API key for testing)
+                const calculator = new EOQCalculator(null);
+                
+                let resultsHtml = '';
+                
+                for (const result of mockSearchResults) {
+                    resultsHtml += '<div class="mock-search-result">';
+                    resultsHtml += '<div class="mock-title">' + result.title + '</div>';
+                    resultsHtml += '<div class="mock-url">' + result.url + '</div>';
+                    resultsHtml += '<div class="mock-snippet">' + result.snippet + '</div>';
+                    
+                    try {
+                        const eoqScore = await calculator.calculateEOQ(result);
+                        
+                        resultsHtml += '<div class="enhancement-display">';
+                        resultsHtml += '<div class="enhancement-method">EOQ Score: ' + (eoqScore.total * 100).toFixed(1) + '% (' + eoqScore.method + ')</div>';
+                        resultsHtml += '<div class="enhancement-adjustments">';
+                        
+                        Object.entries(eoqScore.components).forEach(([key, value]) => {
+                            resultsHtml += '<div class="adjustment-item">';
+                            resultsHtml += '<div class="adjustment-value">' + (value * 100).toFixed(0) + '%</div>';
+                            resultsHtml += '<div class="adjustment-label">' + key + '</div>';
+                            resultsHtml += '</div>';
+                        });
+                        
+                        resultsHtml += '</div></div>';
+                        
+                    } catch (scoreError) {
+                        resultsHtml += '<div class="test-warning">EOQ calculation failed: ' + scoreError.message + '</div>';
+                    }
+                    
+                    resultsHtml += '</div>';
+                }
+
+                container.innerHTML = resultsHtml;
+
+            } catch (error) {
+                container.innerHTML = '<div class="test-error">Mock Results Test Failed: ' + error.message + '</div>';
+            }
+        }
+
+        // Run integration test
+        async function runIntegrationTest() {
+            const resultsDiv = document.getElementById('integration-results');
+            resultsDiv.innerHTML = '<div class="test-result">Running integration test...</div>';
+
+            try {
+                const startTime = performance.now();
+                
+                // Test all components working together
+                const enhancer = new ContentEnhancer();
+                const calculator = new EOQCalculator(null); // No API key for testing
+                
+                let results = '<div class="test-result"><h4>Integration Test Results:</h4>';
+                
+                // Test the full pipeline
+                const testResult = mockSearchResults[0];
+                
+                // Step 1: Content enhancement
+                const enhancement = await enhancer.enhanceResult(testResult);
+                results += '<div>✓ Content enhancement completed (' + enhancement.method + ')</div>';
+                
+                // Step 2: EOQ calculation with enhancement
+                const enhancedResult = { ...testResult, enhancement };
+                const eoqScore = await calculator.calculateEOQ(enhancedResult);
+                results += '<div>✓ EOQ calculation completed (' + eoqScore.method + ')</div>';
+                
+                // Step 3: Verify enhancement was applied
+                if (eoqScore.enhancement) {
+                    results += '<div>✓ Enhancement data preserved in EOQ result</div>';
+                } else {
+                    results += '<div class="test-warning">⚠ Enhancement data not found in EOQ result</div>';
+                }
+                
+                const endTime = performance.now();
+                results += '<div>⏱ Total processing time: ' + (endTime - startTime).toFixed(2) + 'ms</div>';
+                results += '</div>';
+
+                // Test error handling
+                results += '<div class="test-result"><h4>Error Handling Test:</h4>';
+                try {
+                    const badResult = { title: '', url: 'invalid-url', snippet: '' };
+                    const badScore = await calculator.calculateEOQ(badResult);
+                    results += '<div>✓ Handled invalid input gracefully (score: ' + badScore.total.toFixed(2) + ')</div>';
+                } catch (errorHandlingError) {
+                    results += '<div class="test-warning">⚠ Error handling needs improvement: ' + errorHandlingError.message + '</div>';
+                }
+                results += '</div>';
+
+                resultsDiv.innerHTML = results;
+
+            } catch (error) {
+                resultsDiv.innerHTML = '<div class="test-error">Integration Test Failed: ' + error.message + '</div>';
+            }
+        }
+
+        // Run performance test
+        async function runPerformanceTest() {
+            const resultsDiv = document.getElementById('performance-results');
+            resultsDiv.innerHTML = '<div class="test-result">Running performance test...</div>';
+
+            try {
+                const calculator = new EOQCalculator(null);
+                const enhancer = new ContentEnhancer();
+                
+                let results = '<div class="test-result"><h4>Performance Test Results:</h4>';
+                
+                // Test parallel processing
+                const startTime = performance.now();
+                
+                const promises = mockSearchResults.map(async (result, index) => {
+                    const resultStartTime = performance.now();
+                    
+                    try {
+                        const enhancement = await enhancer.enhanceResult(result);
+                        const enhancedResult = { ...result, enhancement };
+                        const eoqScore = await calculator.calculateEOQ(enhancedResult);
+                        
+                        const resultEndTime = performance.now();
+                        return {
+                            index,
+                            title: result.title.substring(0, 30) + '...',
+                            processingTime: resultEndTime - resultStartTime,
+                            score: eoqScore.total,
+                            method: eoqScore.method,
+                            success: true
+                        };
+                    } catch (error) {
+                        const resultEndTime = performance.now();
+                        return {
+                            index,
+                            title: result.title.substring(0, 30) + '...',
+                            processingTime: resultEndTime - resultStartTime,
+                            error: error.message,
+                            success: false
+                        };
+                    }
+                });
+
+                const performanceResults = await Promise.all(promises);
+                const endTime = performance.now();
+                
+                const totalTime = endTime - startTime;
+                const successfulResults = performanceResults.filter(r => r.success);
+                const averageTime = successfulResults.reduce((sum, r) => sum + r.processingTime, 0) / successfulResults.length;
+                
+                results += '<div>📊 Total processing time: ' + totalTime.toFixed(2) + 'ms</div>';
+                results += '<div>📊 Average time per result: ' + averageTime.toFixed(2) + 'ms</div>';
+                results += '<div>📊 Successful results: ' + successfulResults.length + '/' + performanceResults.length + '</div>';
+                results += '<div>📊 Processing rate: ' + (performanceResults.length / (totalTime / 1000)).toFixed(2) + ' results/second</div>';
+                
+                results += '<div class="test-data">';
+                performanceResults.forEach(result => {
+                    if (result.success) {
+                        results += result.title + ': ' + result.processingTime.toFixed(1) + 'ms (' + result.score.toFixed(2) + ', ' + result.method + ')\n';
+                    } else {
+                        results += result.title + ': ' + result.processingTime.toFixed(1) + 'ms (ERROR: ' + result.error + ')\n';
+                    }
+                });
+                results += '</div>';
+                
+                results += '</div>';
+
+                resultsDiv.innerHTML = results;
+
+            } catch (error) {
+                resultsDiv.innerHTML = '<div class="test-error">Performance Test Failed: ' + error.message + '</div>';
+            }
+        }
+
+        // Initialize tests when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check component status immediately
+            checkComponentStatus();
+            
+            // Recheck after a short delay to allow for async loading
+            setTimeout(checkComponentStatus, 1000);
+            
+            console.log('EOQ Hybrid Enhancement Test Suite loaded');
+        });
+    </script>
+</body>
+</html>
