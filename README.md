@@ -15,7 +15,7 @@ The Existence Optimization Quotient (EOQ) evaluates content across four key dime
 
 ### Core Functionality
 - **Intelligent Reranking**: Automatically reorders Google search results based on EOQ scores
-- **AI-Powered Analysis**: Uses OpenAI's GPT-4 for sophisticated content evaluation
+- **AI-Powered Analysis**: Uses OpenAI's GPT-4o-mini for quick, sophisticated content evaluation
 - **Heuristic Fallback**: Works without API key using rule-based scoring
 - **Real-time Processing**: Scores and reorders results as you search
 
@@ -38,7 +38,7 @@ The Existence Optimization Quotient (EOQ) evaluates content across four key dime
 
 1. **Download the Extension**
    ```bash
-   git clone https://github.com/your-repo/eoq-search-reranker.git
+   git clone https://github.com/thedivinememe/eoq-search-reranker.git
    cd eoq-search-reranker
    ```
 
@@ -68,7 +68,6 @@ The extension will be available on the Chrome Web Store once approved.
 1. **Get an API Key**
    - Visit [OpenAI API Keys](https://platform.openai.com/api-keys)
    - Create a new API key
-   - Ensure you have GPT-4 access for best results
 
 2. **Configure the Extension**
    - Click the EOQ extension icon
@@ -353,7 +352,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- OpenAI for providing the GPT-4 API for content analysis
+- OpenAI for providing the GPT API for content analysis
 - The Chrome Extensions team for the robust platform
 - Contributors to the EOQ framework development
 - Beta testers and early adopters providing feedback
