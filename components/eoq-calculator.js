@@ -128,7 +128,9 @@ class EOQCalculator {
       components: { empathy, certainty, boundary, refinement },
       breakdown: {
         empathy: this.lastEmpathyBreakdown,
-        certaintyDetails: this.lastCertaintyDetails
+        certainty: this.lastCertaintyDetails,
+        boundary: this.lastBoundaryDetails,
+        refinement: this.lastRefinementDetails
       },
       method: 'openai'
     };
@@ -153,8 +155,10 @@ class EOQCalculator {
       total: Math.max(0, Math.min(1, totalEOQ)),
       components: { empathy, certainty, boundary, refinement },
       breakdown: {
-        empathy: { golden: empathy, silver: empathy, platinum: empathy, love: empathy },
-        certaintyDetails: { score: certainty, reasoning: 'Heuristic analysis' }
+        empathy: { golden: empathy, silver: empathy, platinum: empathy, love: empathy, reasoning: 'Heuristic pattern analysis' },
+        certainty: { score: certainty, reasoning: 'Heuristic uncertainty analysis' },
+        boundary: { score: boundary, reasoning: 'Heuristic bridge/division analysis' },
+        refinement: { score: refinement, reasoning: 'Heuristic growth/stagnation analysis' }
       },
       method: 'heuristic'
     };
@@ -395,24 +399,30 @@ Score from 0-1 where:
 Content Title: ${content.title}
 Content Snippet: ${content.snippet}
 
-IMPORTANT: You must respond with only a number between 0 and 1. If you cannot assess the content, respond with 0.5.
+IMPORTANT: You must respond with valid JSON only. If you cannot assess the content, use score 0.5.
 
-Example responses: 0.3, 0.7, 0.5
+Required JSON format:
+{
+  "score": 0.5,
+  "reasoning": "Brief explanation"
+}
 `;
 
     try {
       const response = await this.callOpenAI(prompt);
-      const score = parseFloat(response.trim());
+      const result = this.safeParseJSON(response, {
+        score: 0.5,
+        reasoning: 'API parsing failed'
+      });
       
-      // Validate the score
-      if (isNaN(score) || score < 0 || score > 1) {
-        console.warn('Invalid boundary score received:', response, 'Using default 0.5');
-        return 0.5;
-      }
-      
-      return score;
+      this.lastBoundaryDetails = result;
+      return result.score || 0.5;
     } catch (error) {
       console.warn('Boundary assessment failed, using default:', error);
+      this.lastBoundaryDetails = {
+        score: 0.5,
+        reasoning: 'Assessment failed'
+      };
       return 0.5;
     }
   }
@@ -428,24 +438,30 @@ Score from 0-1 where:
 Content Title: ${content.title}
 Content Snippet: ${content.snippet}
 
-IMPORTANT: You must respond with only a number between 0 and 1. If you cannot assess the content, respond with 0.5.
+IMPORTANT: You must respond with valid JSON only. If you cannot assess the content, use score 0.5.
 
-Example responses: 0.3, 0.7, 0.5
+Required JSON format:
+{
+  "score": 0.5,
+  "reasoning": "Brief explanation"
+}
 `;
 
     try {
       const response = await this.callOpenAI(prompt);
-      const score = parseFloat(response.trim());
+      const result = this.safeParseJSON(response, {
+        score: 0.5,
+        reasoning: 'API parsing failed'
+      });
       
-      // Validate the score
-      if (isNaN(score) || score < 0 || score > 1) {
-        console.warn('Invalid refinement score received:', response, 'Using default 0.5');
-        return 0.5;
-      }
-      
-      return score;
+      this.lastRefinementDetails = result;
+      return result.score || 0.5;
     } catch (error) {
       console.warn('Refinement assessment failed, using default:', error);
+      this.lastRefinementDetails = {
+        score: 0.5,
+        reasoning: 'Assessment failed'
+      };
       return 0.5;
     }
   }

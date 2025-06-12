@@ -91,6 +91,8 @@ class UIInjector {
               <div class="eoq-bar">
                 <div class="eoq-bar-fill" style="width: ${eoqScore.components.certainty * 100}%; background-color: #2196F3;"></div>
               </div>
+              ${eoqScore.breakdown && eoqScore.breakdown.certainty && eoqScore.breakdown.certainty.reasoning ? 
+                `<div class="eoq-reasoning">${eoqScore.breakdown.certainty.reasoning}</div>` : ''}
             </div>
             
             <div class="eoq-component" title="Boundary Permeability (20% weight)">
@@ -100,6 +102,8 @@ class UIInjector {
               <div class="eoq-bar">
                 <div class="eoq-bar-fill" style="width: ${eoqScore.components.boundary * 100}%; background-color: #FF9800;"></div>
               </div>
+              ${eoqScore.breakdown && eoqScore.breakdown.boundary && eoqScore.breakdown.boundary.reasoning ? 
+                `<div class="eoq-reasoning">${eoqScore.breakdown.boundary.reasoning}</div>` : ''}
             </div>
             
             <div class="eoq-component" title="Refinement Velocity (15% weight)">
@@ -109,6 +113,8 @@ class UIInjector {
               <div class="eoq-bar">
                 <div class="eoq-bar-fill" style="width: ${eoqScore.components.refinement * 100}%; background-color: #4CAF50;"></div>
               </div>
+              ${eoqScore.breakdown && eoqScore.breakdown.refinement && eoqScore.breakdown.refinement.reasoning ? 
+                `<div class="eoq-reasoning">${eoqScore.breakdown.refinement.reasoning}</div>` : ''}
             </div>
           </div>
           
