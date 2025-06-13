@@ -5,16 +5,22 @@
   "description": "Re-rank search results to optimize for human flourishing using the Existence Optimization Quotient framework",
   "permissions": [
     "storage",
-    "activeTab"
+    "activeTab",
+    "background"
   ],
   "host_permissions": [
     "https://www.google.com/*",
-    "https://api.openai.com/*"
+    "https://api.openai.com/*",
+    "https://*/*",
+    "http://*/*"
   ],
   "content_scripts": [
     {
       "matches": ["https://www.google.com/search*"],
       "js": [
+        "components/domain-reputation.js",
+        "components/content-fetcher.js",
+        "components/content-enhancer.js",
         "components/eoq-calculator.js",
         "components/search-interceptor.js", 
         "components/ui-injector.js",

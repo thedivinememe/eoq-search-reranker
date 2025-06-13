@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Overview Detection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .ai-overview-mock {
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+            background: #f8f9fa;
+        }
+        
+        .ai-overview-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .ai-overview-icon {
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+            background: #4285f4;
+            border-radius: 50%;
+        }
+        
+        .ai-overview-title {
+            font-weight: 500;
+            color: #202124;
+        }
+        
+        .ai-overview-content {
+            color: #3c4043;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+        
+        .show-more-button {
+            background: none;
+            border: none;
+            color: #1a73e8;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 8px 0;
+        }
+        
+        .test-button {
+            background: #1a73e8;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        
+        .test-button:hover {
+            background: #1557b0;
+        }
+        
+        .log {
+            background: #1a1a1a;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        
+        .hidden {
+            opacity: 0.3;
+            transform: scale(0.95);
+            transition: all 0.3s ease;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🤖 AI Overview Detection Test</h1>
+        <p>This test verifies that the EOQ extension can properly detect and hide Google AI Overview elements.</p>
+        
+        <div class="status" id="status">Ready to test...</div>
+        
+        <button class="test-button" onclick="runDetectionTest()">Run Detection Test</button>
+        <button class="test-button" onclick="toggleAiContent()">Toggle AI Content</button>
+        <button class="test-button" onclick="clearLog()">Clear Log</button>
+    </div>
+
+    <div class="test-container">
+        <h2>Mock AI Overview Elements</h2>
+        
+        <!-- Mock AI Overview 1 - Standard Format -->
+        <div class="ai-overview-mock" id="ai-overview-1">
+            <div class="ai-overview-header">
+                <div class="ai-overview-icon"></div>
+                <span class="ai-overview-title">AI Overview</span>
+            </div>
+            <div class="ai-overview-content">
+                This is a mock AI Overview that should be detected and hidden by the content filtering system. 
+                It contains AI-generated content that summarizes information from multiple sources.
+            </div>
+            <button class="show-more-button">Show more</button>
+        </div>
+
+        <!-- Mock AI Overview 2 - Alternative Format -->
+        <div class="ai-overview-mock ULSxyf" id="ai-overview-2">
+            <div class="NFQFxe">
+                <span>✨ AI Overview</span>
+            </div>
+            <div class="wDYxhc">
+                Another mock AI Overview with different CSS classes that should also be detected.
+                This uses the actual Google CSS classes for AI Overview elements.
+            </div>
+            <div class="oIk2Cb">
+                <button>Show more</button>
+            </div>
+        </div>
+
+        <!-- Mock AI Overview 3 - Text-based Detection -->
+        <div class="ai-overview-mock" id="ai-overview-3" data-attrid="SGE">
+            <h3>Search Generative Experience</h3>
+            <p>This element should be detected through its data-attrid attribute and text content.</p>
+            <p>Generated by AI based on search results and knowledge.</p>
+        </div>
+
+        <!-- Regular Content (Should NOT be hidden) -->
+        <div class="test-container" id="regular-content">
+            <h3>Regular Search Result</h3>
+            <p>This is a regular search result that should NOT be hidden by the AI content filter.</p>
+            <p>It contains normal, organic content from a website.</p>
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>Test Log</h2>
+        <div class="log" id="log">
+            <div>AI Overview Detection Test initialized...</div>
+        </div>
+    </div>
+
+    <script>
+        // Load the SearchInterceptor class (simulate)
+        class MockSearchInterceptor {
+            constructor() {
+                this.hideAiContent = true;
+                this.aiContentResults = [];
+            }
+
+            // Simplified version of the AI content detection
+            identifyAndHandleAiContent() {
+                const aiContentSelectors = [
+                    '.ULSxyf',                   // Google AI Overview container
+                    '.NFQFxe',                   // AI Overview header
+                    '.oIk2Cb',                   // AI Overview show more button
+                    '[data-attrid="SGE"]',       // Search Generative Experience
+                    '.ai-overview-mock'          // Our test elements
+                ];
+
+                this.aiContentResults = [];
+
+                // First, try to find AI Overview by text content
+                const allElements = document.querySelectorAll('*');
+                allElements.forEach(element => {
+                    const textContent = this.safeGetTextContent(element).toLowerCase();
+                    if (textContent.includes('ai overview') && element.offsetHeight > 50) {
+                        if (this.hideAiContent) {
+                            this.hideContentElement(element, 'ai-content');
+                            this.log(`Hiding AI Overview by text detection: ${textContent.substring(0, 50)}...`);
+                            this.aiContentResults.push({
+                                element: element,
+                                type: 'ai-content',
+                                selector: 'text-detection'
+                            });
+                        }
+                    }
+                });
+
+                // Then use CSS selectors
+                aiContentSelectors.forEach(selector => {
+                    const elements = document.querySelectorAll(selector);
+                    elements.forEach(element => {
+                        if (this.isAiContent(element)) {
+                            if (!element.classList.contains('eoq-hidden-ai-content')) {
+                                this.aiContentResults.push({
+                                    element: element,
+                                    type: 'ai-content',
+                                    selector: selector
+                                });
+
+                                if (this.hideAiContent) {
+                                    this.hideContentElement(element, 'ai-content');
+                                    this.log(`Hiding AI content: ${selector}`);
+                                }
+                            }
+                        }
+                    });
+                });
+
+                this.log(`Found ${this.aiContentResults.length} AI content elements`);
+                return this.aiContentResults.length;
+            }
+
+            isAiContent(element) {
+                try {
+                    if (!element || !element.isConnected) return false;
+
+                    // Check for AI-specific attributes
+                    const aiAttributes = ['data-attrid', 'data-ved', 'data-async-context'];
+                    for (const attr of aiAttributes) {
+                        const value = element.getAttribute(attr);
+                        if (value && (value.includes('SGE') || value.includes('AI') || value.includes('generative') || value.includes('ai'))) {
+                            return true;
+                        }
+                    }
+
+                    // Check for AI-specific CSS classes
+                    const aiClasses = ['ULSxyf', 'NFQFxe', 'oIk2Cb', 'ai-overview-mock'];
+                    if (aiClasses.some(className => element.classList.contains(className))) {
+                        return true;
+                    }
+
+                    // Check for AI content text indicators
+                    const textContent = this.safeGetTextContent(element).toLowerCase();
+                    const aiIndicators = [
+                        'ai overview', 'generated by ai', 'ai-generated', 'search generative experience',
+                        'show more'
+                    ];
+
+                    if (textContent.includes('ai overview') || 
+                        (element.querySelector('.oIk2Cb') && textContent.includes('show more'))) {
+                        return true;
+                    }
+
+                    return aiIndicators.some(indicator => textContent.includes(indicator));
+                } catch (error) {
+                    this.log('Error checking if element is AI content: ' + error.message);
+                    return false;
+                }
+            }
+
+            hideContentElement(element, contentType) {
+                try {
+                    if (!element || !element.isConnected) return;
+                    
+                    if (!element.dataset.eoqOriginalDisplay) {
+                        element.dataset.eoqOriginalDisplay = element.style.display || 'block';
+                    }
+                    element.style.display = 'none';
+                    element.classList.add(`eoq-hidden-${contentType}`);
+                    element.classList.add('hidden');
+                } catch (error) {
+                    this.log(`Error hiding ${contentType} element: ${error.message}`);
+                }
+            }
+
+            showContentElements(contentType) {
+                const hiddenElements = document.querySelectorAll(`.eoq-hidden-${contentType}`);
+                hiddenElements.forEach(element => {
+                    try {
+                        element.style.display = element.dataset.eoqOriginalDisplay || 'block';
+                        element.classList.remove(`eoq-hidden-${contentType}`);
+                        element.classList.remove('hidden');
+                    } catch (error) {
+                        this.log(`Error showing ${contentType} element: ${error.message}`);
+                    }
+                });
+            }
+
+            toggleAiContent(hide) {
+                this.hideAiContent = hide;
+                
+                if (hide) {
+                    this.identifyAndHandleAiContent();
+                } else {
+                    this.showContentElements('ai-content');
+                }
+                
+                this.log(`AI content ${hide ? 'hidden' : 'shown'}`);
+            }
+
+            safeGetTextContent(element) {
+                try {
+                    if (!element || !element.isConnected) return '';
+                    return element.textContent?.trim() || '';
+                } catch (error) {
+                    return '';
+                }
+            }
+
+            log(message) {
+                const logElement = document.getElementById('log');
+                const timestamp = new Date().toLocaleTimeString();
+                const entry = document.createElement('div');
+                entry.textContent = `[${timestamp}] ${message}`;
+                logElement.appendChild(entry);
+                logElement.scrollTop = logElement.scrollHeight;
+                console.log(message);
+            }
+        }
+
+        // Initialize test
+        const interceptor = new MockSearchInterceptor();
+        let isHidden = false;
+
+        function runDetectionTest() {
+            interceptor.log('Starting AI Overview detection test...');
+            
+            const detectedCount = interceptor.identifyAndHandleAiContent();
+            
+            const statusElement = document.getElementById('status');
+            if (detectedCount > 0) {
+                statusElement.textContent = `✅ Success! Detected and processed ${detectedCount} AI Overview elements.`;
+                statusElement.className = 'status success';
+                isHidden = true;
+            } else {
+                statusElement.textContent = '❌ No AI Overview elements detected. Check the detection logic.';
+                statusElement.className = 'status error';
+            }
+            
+            interceptor.log(`Detection test completed. Found ${detectedCount} AI elements.`);
+        }
+
+        function toggleAiContent() {
+            isHidden = !isHidden;
+            interceptor.toggleAiContent(isHidden);
+            
+            const statusElement = document.getElementById('status');
+            statusElement.textContent = `AI content is now ${isHidden ? 'hidden' : 'visible'}`;
+            statusElement.className = 'status success';
+        }
+
+        function clearLog() {
+            const logElement = document.getElementById('log');
+            logElement.innerHTML = '<div>Log cleared...</div>';
+        }
+
+        // Auto-run test on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                interceptor.log('Page loaded. Ready for testing.');
+                runDetectionTest();
+            }, 500);
+        });
+    </script>
+</body>
+</html>

@@ -1,8 +1,9 @@
 // EOQ Calculator - Core scoring engine for the Existence Optimization Quotient
 class EOQCalculator {
-  constructor(apiKey, preferredModel = 'gpt-4o-mini') {
+  constructor(apiKey, preferredModel = 'gpt-4o-mini', enableContentEnhancement = true) {
     this.apiKey = apiKey;
     this.preferredModel = preferredModel;
+    this.enableContentEnhancement = enableContentEnhancement;
     this.empathyWeights = {
       golden: 0.30,   // Reciprocity
       silver: 0.25,   // Non-harm
@@ -10,7 +11,14 @@ class EOQCalculator {
       love: 0.20      // Universal care
     };
     this.cache = new Map();
+    this.contentEnhancer = new ContentEnhancer();
     this.loadCache();
+  }
+
+  // Set content enhancement preference
+  setContentEnhancement(enabled) {
+    this.enableContentEnhancement = enabled;
+    console.log('EOQ Calculator: Content enhancement', enabled ? 'enabled' : 'disabled');
   }
 
   // Main EOQ calculation method
@@ -29,25 +37,45 @@ class EOQCalculator {
       return cached;
     }
 
+    // Phase 1: Enhanced content analysis (if enabled)
+    let enhancedContent = content;
+    if (this.enableContentEnhancement) {
+      try {
+        const enhancement = await this.contentEnhancer.enhanceResult(searchResult);
+        enhancedContent = { ...content, enhancement };
+        console.log('EOQ: Content enhancement completed, method:', enhancement.method);
+      } catch (error) {
+        console.warn('EOQ: Content enhancement failed, using basic content:', error.message);
+      }
+    } else {
+      console.log('EOQ: Content enhancement disabled by user preference');
+    }
+
     // Detailed logging for diagnostics
     if (!this.apiKey) {
       console.log('EOQ: No API key provided, using heuristic scoring');
-      const heuristicScore = this.calculateHeuristic(content);
+      const heuristicScore = this.calculateHeuristic(enhancedContent);
       this.saveToCache(cacheKey, heuristicScore);
       return heuristicScore;
     }
 
     if (!this.apiKey.startsWith('sk-')) {
       console.warn('EOQ: Invalid API key format, falling back to heuristic');
-      const heuristicScore = this.calculateHeuristic(content);
+      const heuristicScore = this.calculateHeuristic(enhancedContent);
       this.saveToCache(cacheKey, heuristicScore);
       return heuristicScore;
     }
 
     try {
       console.log('EOQ: Attempting OpenAI calculation for', content.title.substring(0, 50) + '...');
-      const eoqScore = await this.calculateWithOpenAI(content);
+      const eoqScore = await this.calculateWithOpenAI(enhancedContent);
       console.log('EOQ: OpenAI calculation successful, score:', eoqScore.total.toFixed(2));
+      
+      // Update domain reputation based on EOQ performance
+      if (enhancedContent.enhancement) {
+        const domain = this.contentEnhancer.domainReputation.extractDomain(content.url);
+        this.contentEnhancer.domainReputation.updateReputationFromEOQ(domain, eoqScore.total);
+      }
       
       // Cache the result
       this.saveToCache(cacheKey, eoqScore);
@@ -59,7 +87,7 @@ class EOQCalculator {
       // Track failure reasons for diagnostics
       this.trackFailureReason(error);
       
-      const heuristicScore = this.calculateHeuristic(content);
+      const heuristicScore = this.calculateHeuristic(enhancedContent);
       heuristicScore.fallbackReason = error.message;
       this.saveToCache(cacheKey, heuristicScore);
       return heuristicScore;
@@ -140,10 +168,21 @@ class EOQCalculator {
   calculateHeuristic(content) {
     const text = `${content.title} ${content.snippet}`.toLowerCase();
     
-    const empathy = this.calculateHeuristicEmpathy(text, content.url);
-    const certainty = this.calculateHeuristicCertainty(text);
-    const boundary = this.calculateHeuristicBoundary(text);
-    const refinement = this.calculateHeuristicRefinement(text, content.url);
+    let empathy = this.calculateHeuristicEmpathy(text, content.url);
+    let certainty = this.calculateHeuristicCertainty(text);
+    let boundary = this.calculateHeuristicBoundary(text);
+    let refinement = this.calculateHeuristicRefinement(text, content.url);
+
+    // Apply content enhancement adjustments if available
+    if (content.enhancement && content.enhancement.adjustments) {
+      const adj = content.enhancement.adjustments;
+      empathy = Math.max(0, Math.min(1, empathy + adj.empathy));
+      certainty = Math.max(0, Math.min(1, certainty + adj.certainty));
+      boundary = Math.max(0, Math.min(1, boundary + adj.boundary));
+      refinement = Math.max(0, Math.min(1, refinement + adj.refinement));
+      
+      console.log('EOQ: Applied content enhancement adjustments:', adj);
+    }
 
     const totalEOQ = 
       0.40 * empathy + 
@@ -155,12 +194,13 @@ class EOQCalculator {
       total: Math.max(0, Math.min(1, totalEOQ)),
       components: { empathy, certainty, boundary, refinement },
       breakdown: {
-        empathy: { golden: empathy, silver: empathy, platinum: empathy, love: empathy, reasoning: 'Heuristic pattern analysis' },
-        certainty: { score: certainty, reasoning: 'Heuristic uncertainty analysis' },
-        boundary: { score: boundary, reasoning: 'Heuristic bridge/division analysis' },
-        refinement: { score: refinement, reasoning: 'Heuristic growth/stagnation analysis' }
+        empathy: { golden: empathy, silver: empathy, platinum: empathy, love: empathy, reasoning: 'Heuristic pattern analysis' + (content.enhancement ? ' + content enhancement' : '') },
+        certainty: { score: certainty, reasoning: 'Heuristic uncertainty analysis' + (content.enhancement ? ' + content enhancement' : '') },
+        boundary: { score: boundary, reasoning: 'Heuristic bridge/division analysis' + (content.enhancement ? ' + content enhancement' : '') },
+        refinement: { score: refinement, reasoning: 'Heuristic growth/stagnation analysis' + (content.enhancement ? ' + content enhancement' : '') }
       },
-      method: 'heuristic'
+      enhancement: content.enhancement,
+      method: content.enhancement ? 'heuristic_enhanced' : 'heuristic'
     };
   }
 

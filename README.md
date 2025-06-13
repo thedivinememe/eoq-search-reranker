@@ -13,24 +13,51 @@ The Existence Optimization Quotient (EOQ) evaluates content across four key dime
 
 ## ✨ Features
 
-### Core Functionality
+### Core EOQ Functionality
 - **Intelligent Reranking**: Automatically reorders Google search results based on EOQ scores
-- **AI-Powered Analysis**: Uses OpenAI's GPT-4o-mini for quick, sophisticated content evaluation
-- **Heuristic Fallback**: Works without API key using rule-based scoring
-- **Real-time Processing**: Scores and reorders results as you search
+- **Multi-Model AI Support**: Choose from GPT-4o, GPT-4o-mini, GPT-4-turbo, or GPT-3.5-turbo
+- **Hybrid Enhancement**: Combines AI analysis with web content fetching for deeper insights
+- **Heuristic Fallback**: Works without API key using sophisticated rule-based scoring
+- **Real-time Processing**: Parallel scoring for fast results processing
+- **Domain Reputation**: Evaluates source credibility and trustworthiness
 
-### User Interface
-- **Score Overlays**: Visual indicators showing EOQ scores and breakdowns
-- **Interactive Details**: Expandable components showing empathy breakdown
-- **Comparison Panel**: Side-by-side view of EOQ vs traditional rankings
-- **Toggle Control**: Easy switching between EOQ and original rankings
+### Advanced Content Filtering
+- **AI Content Filtering**: Automatically detects and hides Google AI Overview and AI-generated content
+- **Sponsored Result Filtering**: Intelligently removes ads, promoted content, and affiliate marketing
+- **Image Content Filtering**: Optional filtering of image carousels and image-focused results  
+- **Video Content Filtering**: Optional filtering of YouTube and video-heavy results
+- **Smart Detection**: Uses multiple signals (DOM structure, URL patterns, content analysis)
+- **Granular Control**: Hide completely, de-prioritize, mark only, or disable each filter type
 
-### Advanced Features
-- **Sponsored Result Filtering**: Automatically hides or de-prioritizes sponsored/ad content
-- **Caching System**: Stores calculated scores to reduce API calls
-- **Session Statistics**: Tracks searches enhanced and average improvements
-- **Export Functionality**: Download your usage data and settings
-- **Privacy-First**: All processing happens locally in your browser
+### Enhanced User Interface
+- **Dynamic Score Overlays**: Visual indicators with expandable EOQ breakdowns
+- **Interactive Components**: Click to expand empathy sub-scores and reasoning
+- **Comparison Dashboard**: Side-by-side EOQ vs traditional ranking analysis
+- **Floating Controls**: Non-intrusive toggle and settings panel
+- **Progress Indicators**: Real-time feedback during score calculation
+- **Status Notifications**: Clear feedback on extension state and actions
+
+### Content Enhancement System
+- **Web Content Fetching**: Retrieves full page content for more accurate scoring
+- **CORS-Safe Processing**: Handles cross-origin restrictions gracefully
+- **Content Summarization**: Extracts key information from full articles
+- **Fallback Mechanisms**: Multiple scoring methods ensure reliability
+- **Performance Optimization**: Efficient caching and parallel processing
+
+### Model Selection & Configuration
+- **Flexible AI Models**: Support for multiple OpenAI models with different capabilities
+- **Cost Optimization**: Choose faster/cheaper models for routine scoring
+- **Quality Control**: Higher-end models for complex content analysis
+- **Automatic Fallbacks**: Graceful degradation when preferred models unavailable
+- **Usage Tracking**: Monitor API costs and usage patterns
+
+### Privacy & Performance
+- **Local Processing**: All analysis happens in your browser
+- **Secure Storage**: Encrypted API key storage in Chrome sync
+- **Smart Caching**: Reduces API calls while maintaining freshness
+- **Session Statistics**: Track improvements without external data collection
+- **Export Capabilities**: Download your usage data and settings
+- **Debug Mode**: Advanced troubleshooting and performance monitoring
 
 ## 🚀 Installation
 
@@ -81,10 +108,25 @@ The extension will be available on the Chrome Web Store once approved.
 
 ### Settings Options
 
+#### Core EOQ Settings
 - **Enable EOQ Ranking**: Toggle automatic reordering of search results
 - **Show Score Overlays**: Display EOQ scores on search results
-- **Hide Sponsored Results**: Automatically filter out ads and sponsored content
+- **Model Selection**: Choose from GPT-4o, GPT-4o-mini, GPT-4-turbo, or GPT-3.5-turbo
+- **Content Enhancement**: Enable web content fetching for deeper analysis
 - **Cache Scores Locally**: Store calculated scores to reduce API usage
+
+#### Content Filtering Settings
+- **Hide AI Content**: Automatically filter Google AI Overview and AI-generated summaries
+- **Hide Sponsored Results**: Remove ads, promoted content, and affiliate marketing
+- **Hide Image Content**: Filter image carousels and image-focused results
+- **Hide Video Content**: Filter YouTube and video-heavy results
+- **Debug Mode**: Enable detailed logging and performance monitoring
+
+#### Advanced Configuration
+- **Hybrid Enhancement**: Combine AI analysis with full web content fetching
+- **Domain Reputation**: Factor in source credibility and trustworthiness
+- **Parallel Processing**: Enable faster scoring through concurrent analysis
+- **Fallback Methods**: Automatic switching between AI and heuristic scoring
 
 ## 📖 How to Use
 
@@ -138,6 +180,59 @@ The extension includes intelligent filtering of sponsored and advertising conten
 - **Mark Only**: Keep in place but add visual indicators
 - **Disable**: Turn off sponsored filtering entirely
 
+### AI Content Filtering
+
+The extension automatically detects and filters AI-generated content to focus on human-authored, original sources:
+
+#### What Gets Filtered
+- **Google AI Overview**: The AI-generated summaries at the top of search results
+- **Search Generative Experience (SGE)**: Google's experimental AI responses
+- **AI-Generated Summaries**: Automated content summaries and overviews
+- **Bard Responses**: Google's AI chatbot responses in search results
+
+#### Detection Methods
+- **Text Pattern Analysis**: Identifies "AI Overview" and similar phrases
+- **CSS Class Detection**: Recognizes Google's AI-specific styling classes
+- **DOM Structure Analysis**: Detects AI content containers and layouts
+- **Attribute-Based Detection**: Uses data attributes like `data-attrid="SGE"`
+
+#### Benefits
+- **Human-First Results**: Prioritizes content created by real people
+- **Original Sources**: Direct access to primary information sources
+- **Reduced AI Bias**: Avoids potential biases in AI-generated summaries
+- **Authentic Perspectives**: Access to diverse human viewpoints and experiences
+
+#### Safety Features
+- **Precise Targeting**: Only hides specific AI elements, never entire pages
+- **Container Protection**: Safeguards against hiding main search results
+- **Size Validation**: Uses element dimensions to prevent over-filtering
+- **Fallback Protection**: Conservative approach that defaults to showing content
+
+### Model Selection & Performance
+
+Choose the right AI model for your needs and budget:
+
+#### Available Models
+- **GPT-4o**: Latest and most capable, best for complex analysis
+- **GPT-4o-mini**: Balanced performance and cost, recommended for most users
+- **GPT-4-turbo**: High performance with good speed
+- **GPT-3.5-turbo**: Fastest and most economical option
+
+#### Performance Comparison
+| Model | Speed | Cost | Quality | Best For |
+|-------|-------|------|---------|----------|
+| GPT-4o | Slow | High | Excellent | Complex content, research |
+| GPT-4o-mini | Fast | Low | Very Good | General use, daily searches |
+| GPT-4-turbo | Medium | Medium | Excellent | Professional use |
+| GPT-3.5-turbo | Very Fast | Very Low | Good | Quick scoring, high volume |
+
+#### Hybrid Enhancement
+When enabled, the extension fetches full web page content for more accurate scoring:
+- **Deeper Analysis**: Analyzes complete articles, not just snippets
+- **Better Context**: Understands full context and nuance
+- **Improved Accuracy**: More reliable EOQ scores based on complete content
+- **CORS Handling**: Gracefully handles cross-origin restrictions
+
 ### Understanding Scores
 
 #### Overall EOQ Score
@@ -186,45 +281,108 @@ The extension includes intelligent filtering of sponsored and advertising conten
 ### File Structure
 ```
 eoq-search-reranker/
-├── manifest.json              # Extension configuration
-├── background.js              # Service worker for extension lifecycle
-├── content-script.js          # Main orchestration script
+├── manifest.json                    # Extension configuration
+├── background.js                    # Service worker for extension lifecycle
+├── content-script.js                # Main orchestration script
 ├── components/
-│   ├── eoq-calculator.js      # Core EOQ scoring logic
-│   ├── search-interceptor.js  # Google search result extraction
-│   └── ui-injector.js         # UI components and overlays
+│   ├── eoq-calculator.js            # Core EOQ scoring logic
+│   ├── search-interceptor.js        # Search result extraction & filtering
+│   ├── ui-injector.js               # UI components and overlays
+│   ├── content-fetcher.js           # Web content retrieval system
+│   ├── content-enhancer.js          # Content enhancement & summarization
+│   └── domain-reputation.js         # Domain credibility assessment
 ├── popup/
-│   ├── popup.html            # Extension popup interface
-│   ├── popup.css             # Popup styling
-│   └── popup.js              # Popup functionality
+│   ├── popup.html                   # Extension popup interface
+│   ├── popup.css                    # Popup styling
+│   └── popup.js                     # Popup functionality & settings
 ├── styles/
-│   └── eoq-overlay.css       # Content script styling
+│   └── eoq-overlay.css              # Content script styling
 ├── icons/
-│   ├── icon-16.png           # Extension icons
-│   ├── icon-48.png
-│   └── icon-128.png
-└── README.md                 # This file
+│   ├── icon-16.png                  # Extension icons (16x16)
+│   ├── icon-48.png                  # Extension icons (48x48)
+│   ├── icon-128.png                 # Extension icons (128x128)
+│   └── create-icons.html            # Icon generation utility
+├── test/
+│   ├── test-page.html               # Basic functionality test
+│   ├── model-selection-test.html    # AI model testing
+│   ├── content-enhancement-toggle-test.html # Enhancement testing
+│   ├── content-filtering-test.html  # Content filtering tests
+│   ├── ai-overview-detection-test.html # AI content detection tests
+│   ├── hybrid-enhancement-test.html # Hybrid enhancement tests
+│   └── sponsored-filter-test.html   # Sponsored content filtering tests
+├── documentation/
+│   ├── MODEL_SELECTION_IMPLEMENTATION.md
+│   ├── CONTENT_ENHANCEMENT_TOGGLE_SUCCESS.md
+│   ├── CONTENT_FILTERING_IMPLEMENTATION.md
+│   ├── HYBRID_ENHANCEMENT_IMPLEMENTATION.md
+│   └── SPONSORED_FILTER_FIXES.md
+└── README.md                        # This comprehensive guide
 ```
 
 ### Key Components
 
 #### EOQ Calculator (`components/eoq-calculator.js`)
-- Implements the four-dimensional EOQ framework
-- Handles OpenAI API integration for AI-powered analysis
-- Provides fallback heuristic scoring
-- Manages empathy sub-component evaluation
+- **Core Framework**: Implements the four-dimensional EOQ scoring system
+- **Multi-Model Support**: Handles GPT-4o, GPT-4o-mini, GPT-4-turbo, GPT-3.5-turbo
+- **Hybrid Analysis**: Combines AI scoring with heuristic fallbacks
+- **Empathy Breakdown**: Detailed sub-component analysis (Golden, Silver, Platinum, Universal Love)
+- **Performance Optimization**: Parallel processing and intelligent caching
+- **Error Handling**: Graceful degradation and comprehensive error recovery
 
 #### Search Interceptor (`components/search-interceptor.js`)
-- Extracts search results from Google's DOM
-- Handles different Google layouts and result types
-- Manages result reordering and position tracking
-- Provides statistics about ranking changes
+- **Result Extraction**: Handles multiple Google search layouts and formats
+- **Content Filtering**: Advanced filtering for sponsored, AI, image, and video content
+- **Smart Detection**: Multi-signal approach using DOM, URL, and content analysis
+- **Reordering Engine**: Sophisticated result reordering with position tracking
+- **Statistics**: Comprehensive analytics on ranking changes and improvements
+- **Safety Features**: Prevents accidental hiding of main search containers
 
 #### UI Injector (`components/ui-injector.js`)
-- Creates and manages all visual elements
-- Handles score overlays and detailed breakdowns
-- Manages the comparison panel and statistics
-- Provides interactive controls and feedback
+- **Dynamic Overlays**: Interactive score displays with expandable details
+- **Floating Controls**: Non-intrusive toggle and settings panel
+- **Progress Feedback**: Real-time status updates during processing
+- **Comparison Dashboard**: Side-by-side ranking analysis
+- **Accessibility**: Full keyboard navigation and screen reader support
+- **Responsive Design**: Adapts to different screen sizes and layouts
+
+#### Content Fetcher (`components/content-fetcher.js`)
+- **Web Content Retrieval**: Fetches full page content for enhanced analysis
+- **CORS Handling**: Manages cross-origin restrictions gracefully
+- **Performance Optimization**: Efficient caching and request management
+- **Error Recovery**: Multiple fallback strategies for failed requests
+- **Content Sanitization**: Cleans and processes retrieved content safely
+
+#### Content Enhancer (`components/content-enhancer.js`)
+- **Content Summarization**: Extracts key information from full articles
+- **Context Analysis**: Provides deeper understanding of content meaning
+- **Quality Assessment**: Evaluates content depth and reliability
+- **Integration Layer**: Seamlessly integrates with EOQ scoring system
+
+#### Domain Reputation (`components/domain-reputation.js`)
+- **Credibility Assessment**: Evaluates source trustworthiness and authority
+- **Reputation Scoring**: Factors domain history and reliability into EOQ scores
+- **Bias Detection**: Identifies potential biases in content sources
+- **Quality Indicators**: Assesses editorial standards and fact-checking practices
+
+### Architecture Patterns
+
+#### Modular Design
+- **Separation of Concerns**: Each component handles specific functionality
+- **Loose Coupling**: Components interact through well-defined interfaces
+- **Extensibility**: Easy to add new features and scoring methods
+- **Testability**: Individual components can be tested in isolation
+
+#### Performance Optimization
+- **Parallel Processing**: Concurrent scoring for faster results
+- **Intelligent Caching**: Reduces API calls and improves response times
+- **Lazy Loading**: Components load only when needed
+- **Memory Management**: Efficient cleanup and resource management
+
+#### Error Handling & Resilience
+- **Graceful Degradation**: System continues working even when components fail
+- **Multiple Fallbacks**: Heuristic scoring when AI is unavailable
+- **Comprehensive Logging**: Detailed error reporting for debugging
+- **User Feedback**: Clear communication of system status and issues
 
 ## 🔒 Privacy & Security
 

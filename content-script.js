@@ -44,26 +44,43 @@
         apiKey, 
         eoqEnabled = true, 
         hideSponsoredResults = true,
+        hideAiContent = true,
+        hideImages = false,
+        hideVideos = false,
         debugMode = false,
+        enableContentEnhancement = true,
         preferredModel = 'gpt-4o-mini'
-      } = await chrome.storage.sync.get(['apiKey', 'eoqEnabled', 'hideSponsoredResults', 'debugMode', 'preferredModel']);
+      } = await chrome.storage.sync.get(['apiKey', 'eoqEnabled', 'hideSponsoredResults', 'hideAiContent', 'hideImages', 'hideVideos', 'debugMode', 'enableContentEnhancement', 'preferredModel']);
       
       console.log('API key available:', !!apiKey);
       console.log('EOQ enabled:', eoqEnabled);
       console.log('Debug mode:', debugMode);
+      console.log('Content enhancement enabled:', enableContentEnhancement);
 
       // Initialize components
-      calculator = new EOQCalculator(apiKey, preferredModel);
+      calculator = new EOQCalculator(apiKey, preferredModel, enableContentEnhancement);
       interceptor = new SearchInterceptor();
       interceptor.hideSponsoredResults = hideSponsoredResults;
+      interceptor.hideAiContent = hideAiContent;
+      interceptor.hideImages = hideImages;
+      interceptor.hideVideos = hideVideos;
       interceptor.debugMode = debugMode;
       uiInjector = new UIInjector();
 
-      // Extract search results
+      // Extract search results first to ensure page is ready
       const results = interceptor.extractSearchResults();
       if (results.length === 0) {
         console.log('No search results found');
         return;
+      }
+
+      // Apply content filtering after we confirm search results exist
+      if (results.length > 0) {
+        console.log('Search results found, applying content filters...');
+        interceptor.identifyAndHandleSponsoredResults();
+        interceptor.identifyAndHandleAiContent();
+        interceptor.identifyAndHandleImageContent();
+        interceptor.identifyAndHandleVideoContent();
       }
 
       console.log(`Found ${results.length} search results`);
@@ -455,10 +472,25 @@
         if (settings.hideSponsoredResults !== undefined) {
           interceptor.toggleSponsoredResults(settings.hideSponsoredResults);
         }
+        if (settings.hideAiContent !== undefined) {
+          interceptor.toggleAiContent(settings.hideAiContent);
+        }
+        if (settings.hideImages !== undefined) {
+          interceptor.toggleImageContent(settings.hideImages);
+        }
+        if (settings.hideVideos !== undefined) {
+          interceptor.toggleVideoContent(settings.hideVideos);
+        }
         if (settings.debugMode !== undefined) {
           interceptor.debugMode = settings.debugMode;
           console.log('Debug mode updated:', settings.debugMode);
         }
+      }
+      
+      // Update calculator settings
+      if (calculator && settings.enableContentEnhancement !== undefined) {
+        calculator.setContentEnhancement(settings.enableContentEnhancement);
+        console.log('Content enhancement updated:', settings.enableContentEnhancement);
       }
       
       // Handle EOQ toggle

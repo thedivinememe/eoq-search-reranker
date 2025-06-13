@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EOQ Content Filtering Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .test-section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .test-section h2 {
+            color: #333;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .filter-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .filter-group {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .filter-group h3 {
+            margin: 0 0 15px 0;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+            margin-left: 10px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 30px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #667eea;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+        
+        .test-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .result-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .result-card.hidden {
+            opacity: 0.3;
+            transform: scale(0.95);
+            filter: grayscale(100%);
+        }
+        
+        .result-card h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        
+        .result-card p {
+            margin: 5px 0;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .content-type {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .sponsored { background: #ff9800; color: white; }
+        .ai-content { background: #2196f3; color: white; }
+        .image-content { background: #4caf50; color: white; }
+        .video-content { background: #e91e63; color: white; }
+        .organic { background: #9e9e9e; color: white; }
+        
+        .stats-panel {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .test-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: background 0.3s ease;
+        }
+        
+        .test-button:hover {
+            background: #5a67d8;
+        }
+        
+        .test-button.secondary {
+            background: #718096;
+        }
+        
+        .test-button.secondary:hover {
+            background: #4a5568;
+        }
+        
+        .log-panel {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 2px 0;
+        }
+        
+        .log-entry.info { color: #63b3ed; }
+        .log-entry.success { color: #68d391; }
+        .log-entry.warning { color: #fbb6ce; }
+        .log-entry.error { color: #fc8181; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔍 EOQ Content Filtering Test Suite</h1>
+        <p>Test the advanced content filtering capabilities of the EOQ Search Reranker</p>
+    </div>
+
+    <div class="test-section">
+        <h2>🎛️ Content Filter Controls</h2>
+        <div class="filter-controls">
+            <div class="filter-group">
+                <h3>🎯 Sponsored Content</h3>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="hide-sponsored" checked>
+                    <span class="slider"></span>
+                </label>
+                <span>Hide sponsored results</span>
+                <p>Filters out advertisements and promoted content to focus on organic results.</p>
+            </div>
+            
+            <div class="filter-group">
+                <h3>🤖 AI-Generated Content</h3>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="hide-ai" checked>
+                    <span class="slider"></span>
+                </label>
+                <span>Hide AI content</span>
+                <p>Removes AI overviews, generated summaries, and other AI-produced content.</p>
+            </div>
+            
+            <div class="filter-group">
+                <h3>🖼️ Image Content</h3>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="hide-images">
+                    <span class="slider"></span>
+                </label>
+                <span>Hide image results</span>
+                <p>Filters out image carousels and image-focused search results.</p>
+            </div>
+            
+            <div class="filter-group">
+                <h3>🎥 Video Content</h3>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="hide-videos">
+                    <span class="slider"></span>
+                </label>
+                <span>Hide video results</span>
+                <p>Removes video thumbnails, YouTube results, and video-focused content.</p>
+            </div>
+        </div>
+        
+        <div style="text-align: center;">
+            <button class="test-button" onclick="applyFilters()">Apply Filters</button>
+            <button class="test-button secondary" onclick="resetFilters()">Reset All</button>
+            <button class="test-button secondary" onclick="generateTestContent()">Generate Test Content</button>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>📊 Filtering Statistics</h2>
+        <div class="stats-panel">
+            <h3>Content Filtering Results</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-number" id="total-results">0</span>
+                    <span class="stat-label">Total Results</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="sponsored-hidden">0</span>
+                    <span class="stat-label">Sponsored Hidden</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="ai-hidden">0</span>
+                    <span class="stat-label">AI Content Hidden</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="images-hidden">0</span>
+                    <span class="stat-label">Images Hidden</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="videos-hidden">0</span>
+                    <span class="stat-label">Videos Hidden</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="visible-results">0</span>
+                    <span class="stat-label">Visible Results</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>🧪 Test Results</h2>
+        <div class="test-results" id="test-results">
+            <!-- Test content will be generated here -->
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>📝 Activity Log</h2>
+        <div class="log-panel" id="log-panel">
+            <div class="log-entry info">Content filtering test suite initialized</div>
+        </div>
+    </div>
+
+    <script>
+        // Test data representing different types of search results
+        const testResults = [
+            {
+                id: 1,
+                type: 'sponsored',
+                title: 'Best Online Marketing Course - Get 50% Off Today!',
+                snippet: 'Transform your business with our proven marketing strategies. Limited time offer!',
+                url: 'https://example-ads.com/marketing-course',
+                domain: 'example-ads.com'
+            },
+            {
+                id: 2,
+                type: 'ai-content',
+                title: 'AI Overview: What is Digital Marketing?',
+                snippet: 'Digital marketing encompasses all marketing efforts that use electronic devices or the internet...',
+                url: 'https://google.com/ai-overview',
+                domain: 'google.com'
+            },
+            {
+                id: 3,
+                type: 'organic',
+                title: 'Complete Guide to Digital Marketing in 2024',
+                snippet: 'Learn the fundamentals of digital marketing with this comprehensive guide covering SEO, social media, and more.',
+                url: 'https://marketingblog.com/guide-2024',
+                domain: 'marketingblog.com'
+            },
+            {
+                id: 4,
+                type: 'sponsored',
+                title: 'HubSpot Marketing Software - Free Trial',
+                snippet: 'All-in-one marketing platform trusted by over 100,000 businesses worldwide.',
+                url: 'https://hubspot.com/marketing-software',
+                domain: 'hubspot.com'
+            },
+            {
+                id: 5,
+                type: 'image-content',
+                title: 'Digital Marketing Infographics and Charts',
+                snippet: 'View images showing digital marketing statistics, trends, and visual guides.',
+                url: 'https://images.google.com/marketing-infographics',
+                domain: 'images.google.com'
+            },
+            {
+                id: 6,
+                type: 'video-content',
+                title: 'Digital Marketing Tutorial - YouTube',
+                snippet: 'Watch this comprehensive 2-hour tutorial covering all aspects of digital marketing.',
+                url: 'https://youtube.com/watch?v=marketing-tutorial',
+                domain: 'youtube.com'
+            },
+            {
+                id: 7,
+                type: 'organic',
+                title: 'Digital Marketing Trends for Small Businesses',
+                snippet: 'Discover the latest digital marketing trends that can help small businesses grow their online presence.',
+                url: 'https://smallbizmarketing.com/trends',
+                domain: 'smallbizmarketing.com'
+            },
+            {
+                id: 8,
+                type: 'ai-content',
+                title: 'Generated Summary: Digital Marketing ROI',
+                snippet: 'Based on multiple sources, digital marketing ROI typically ranges from 300-400% for well-executed campaigns...',
+                url: 'https://google.com/generated-summary',
+                domain: 'google.com'
+            },
+            {
+                id: 9,
+                type: 'video-content',
+                title: 'Top 10 Digital Marketing Tools - Video Review',
+                snippet: 'Watch our detailed review of the best digital marketing tools available in 2024.',
+                url: 'https://vimeo.com/marketing-tools-review',
+                domain: 'vimeo.com'
+            },
+            {
+                id: 10,
+                type: 'organic',
+                title: 'How to Measure Digital Marketing Success',
+                snippet: 'Learn key metrics and KPIs to track the effectiveness of your digital marketing campaigns.',
+                url: 'https://analytics-guide.com/measuring-success',
+                domain: 'analytics-guide.com'
+            }
+        ];
+
+        let currentFilters = {
+            sponsored: true,
+            ai: true,
+            images: false,
+            videos: false
+        };
+
+        // Initialize the test suite
+        function initializeTest() {
+            generateTestContent();
+            setupEventListeners();
+            logMessage('Test suite ready', 'success');
+        }
+
+        // Set up event listeners for filter controls
+        function setupEventListeners() {
+            document.getElementById('hide-sponsored').addEventListener('change', (e) => {
+                currentFilters.sponsored = e.target.checked;
+                logMessage(`Sponsored filter: ${e.target.checked ? 'ON' : 'OFF'}`, 'info');
+            });
+
+            document.getElementById('hide-ai').addEventListener('change', (e) => {
+                currentFilters.ai = e.target.checked;
+                logMessage(`AI content filter: ${e.target.checked ? 'ON' : 'OFF'}`, 'info');
+            });
+
+            document.getElementById('hide-images').addEventListener('change', (e) => {
+                currentFilters.images = e.target.checked;
+                logMessage(`Image filter: ${e.target.checked ? 'ON' : 'OFF'}`, 'info');
+            });
+
+            document.getElementById('hide-videos').addEventListener('change', (e) => {
+                currentFilters.videos = e.target.checked;
+                logMessage(`Video filter: ${e.target.checked ? 'ON' : 'OFF'}`, 'info');
+            });
+        }
+
+        // Generate test content
+        function generateTestContent() {
+            const container = document.getElementById('test-results');
+            container.innerHTML = '';
+
+            testResults.forEach(result => {
+                const card = document.createElement('div');
+                card.className = 'result-card';
+                card.id = `result-${result.id}`;
+                card.dataset.type = result.type;
+
+                card.innerHTML = `
+                    <div class="content-type ${result.type}">${getTypeLabel(result.type)}</div>
+                    <h4>${result.title}</h4>
+                    <p><strong>Domain:</strong> ${result.domain}</p>
+                    <p>${result.snippet}</p>
+                    <p><small><strong>URL:</strong> ${result.url}</small></p>
+                `;
+
+                container.appendChild(card);
+            });
+
+            updateStatistics();
+            logMessage('Generated test content with 10 sample results', 'success');
+        }
+
+        // Apply current filter settings
+        function applyFilters() {
+            const results = document.querySelectorAll('.result-card');
+            let hiddenCount = { sponsored: 0, ai: 0, images: 0, videos: 0 };
+
+            results.forEach(card => {
+                const type = card.dataset.type;
+                let shouldHide = false;
+
+                switch (type) {
+                    case 'sponsored':
+                        shouldHide = currentFilters.sponsored;
+                        if (shouldHide) hiddenCount.sponsored++;
+                        break;
+                    case 'ai-content':
+                        shouldHide = currentFilters.ai;
+                        if (shouldHide) hiddenCount.ai++;
+                        break;
+                    case 'image-content':
+                        shouldHide = currentFilters.images;
+                        if (shouldHide) hiddenCount.images++;
+                        break;
+                    case 'video-content':
+                        shouldHide = currentFilters.videos;
+                        if (shouldHide) hiddenCount.videos++;
+                        break;
+                }
+
+                if (shouldHide) {
+                    card.classList.add('hidden');
+                } else {
+                    card.classList.remove('hidden');
+                }
+            });
+
+            updateStatistics();
+            logMessage(`Filters applied - Hidden: ${Object.values(hiddenCount).reduce((a, b) => a + b, 0)} results`, 'success');
+        }
+
+        // Reset all filters
+        function resetFilters() {
+            document.getElementById('hide-sponsored').checked = false;
+            document.getElementById('hide-ai').checked = false;
+            document.getElementById('hide-images').checked = false;
+            document.getElementById('hide-videos').checked = false;
+
+            currentFilters = { sponsored: false, ai: false, images: false, videos: false };
+
+            const results = document.querySelectorAll('.result-card');
+            results.forEach(card => card.classList.remove('hidden'));
+
+            updateStatistics();
+            logMessage('All filters reset', 'info');
+        }
+
+        // Update statistics display
+        function updateStatistics() {
+            const total = testResults.length;
+            const sponsored = document.querySelectorAll('.result-card[data-type="sponsored"].hidden').length;
+            const ai = document.querySelectorAll('.result-card[data-type="ai-content"].hidden').length;
+            const images = document.querySelectorAll('.result-card[data-type="image-content"].hidden').length;
+            const videos = document.querySelectorAll('.result-card[data-type="video-content"].hidden').length;
+            const visible = total - sponsored - ai - images - videos;
+
+            document.getElementById('total-results').textContent = total;
+            document.getElementById('sponsored-hidden').textContent = sponsored;
+            document.getElementById('ai-hidden').textContent = ai;
+            document.getElementById('images-hidden').textContent = images;
+            document.getElementById('videos-hidden').textContent = videos;
+            document.getElementById('visible-results').textContent = visible;
+        }
+
+        // Get display label for content type
+        function getTypeLabel(type) {
+            const labels = {
+                'sponsored': '🎯 SPONSORED',
+                'ai-content': '🤖 AI GENERATED',
+                'image-content': '🖼️ IMAGES',
+                'video-content': '🎥 VIDEOS',
+                'organic': '📄 ORGANIC'
+            };
+            return labels[type] || type.toUpperCase();
+        }
+
+        // Log messages to the activity panel
+        function logMessage(message, type = 'info') {
+            const logPanel = document.getElementById('log-panel');
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${timestamp}] ${message}`;
+            
+            logPanel.appendChild(entry);
+            logPanel.scrollTop = logPanel.scrollHeight;
+        }
+
+        // Test the extension's content filtering if available
+        function testExtensionIntegration() {
+            if (typeof window.EOQDebug !== 'undefined') {
+                logMessage('EOQ extension detected - testing integration', 'success');
+                
+                // Test getting current scores
+                const scores = window.EOQDebug.getScores();
+                if (scores && scores.length > 0) {
+                    logMessage(`Found ${scores.length} scored results from extension`, 'info');
+                } else {
+                    logMessage('No scored results available from extension', 'warning');
+                }
+                
+                // Test getting stats
+                const stats = window.EOQDebug.getStats();
+                if (stats) {
+                    logMessage(`Extension stats: ${stats.totalMoved} results moved`, 'info');
+                } else {
+                    logMessage('No extension stats available', 'warning');
+                }
+            } else {
+                logMessage('EOQ extension not detected - running standalone test', 'warning');
+            }
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeTest();
+            setTimeout(testExtensionIntegration, 1000);
+        });
+
+        // Simulate Chrome extension storage for testing
+        if (typeof chrome === 'undefined') {
+            window.chrome = {
+                storage: {
+                    sync: {
+                        get: (keys, callback) => {
+                            const mockData = {
+                                hideSponsoredResults: true,
+                                hideAiContent: true,
+                                hideImages: false,
+                                hideVideos: false
+                            };
+                            callback(mockData);
+                        },
+                        set: (data, callback) => {
+                            console.log('Mock storage set:', data);
+                            if (callback) callback();
+                        }
+                    }
+                }
+            };
+            logMessage('Mock Chrome API initialized for testing', 'info');
+        }
+    </script>
+</body>
+</html>
