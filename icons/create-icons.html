@@ -56,35 +56,52 @@
             const canvas = document.getElementById(canvasId);
             const ctx = canvas.getContext('2d');
             
-            // Clear canvas
+            // Clear canvas to transparent
             ctx.clearRect(0, 0, size, size);
             
-            // Create gradient background
-            const gradient = ctx.createLinearGradient(0, 0, size, size);
-            gradient.addColorStop(0, '#667eea');
-            gradient.addColorStop(1, '#764ba2');
+            // Define golden color
+            const goldColor = '#FFD700';
             
-            // Draw background circle
-            ctx.fillStyle = gradient;
+            // Calculate dimensions
+            const centerX = size / 2;
+            const centerY = size / 2;
+            const outerRadius = (size / 2) - 2; // Leave small margin
+            const innerRadius = size * 0.15; // Centroid circle size
+            const strokeWidth = Math.max(1, size * 0.08); // Outline thickness
+            
+            // Draw black background circle (inside the golden outline)
+            ctx.fillStyle = '#000000';
             ctx.beginPath();
-            ctx.arc(size/2, size/2, size/2 - 1, 0, 2 * Math.PI);
+            ctx.arc(centerX, centerY, outerRadius - strokeWidth, 0, 2 * Math.PI);
             ctx.fill();
             
-            // Draw star emoji or symbol
-            ctx.fillStyle = '#ffffff';
-            ctx.font = `${size * 0.6}px Arial`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            
-            // Use star symbol
-            ctx.fillText('★', size/2, size/2);
-            
-            // Add subtle border
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-            ctx.lineWidth = 1;
+            // Draw golden outline circle
+            ctx.strokeStyle = goldColor;
+            ctx.lineWidth = strokeWidth;
             ctx.beginPath();
-            ctx.arc(size/2, size/2, size/2 - 1, 0, 2 * Math.PI);
+            ctx.arc(centerX, centerY, outerRadius - strokeWidth/2, 0, 2 * Math.PI);
             ctx.stroke();
+            
+            // Draw golden centroid circle (filled)
+            ctx.fillStyle = goldColor;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, innerRadius, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Add subtle glow effect for larger icons
+            if (size >= 48) {
+                ctx.shadowColor = goldColor;
+                ctx.shadowBlur = size * 0.05;
+                
+                // Redraw centroid with glow
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, innerRadius, 0, 2 * Math.PI);
+                ctx.fill();
+                
+                // Reset shadow
+                ctx.shadowColor = 'transparent';
+                ctx.shadowBlur = 0;
+            }
         }
         
         function downloadIcon(canvasId, filename) {
