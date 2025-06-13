@@ -1,8 +1,9 @@
 // EOQ Calculator - Core scoring engine for the Existence Optimization Quotient
 class EOQCalculator {
-  constructor(apiKey, preferredModel = 'gpt-4o-mini') {
+  constructor(apiKey, preferredModel = 'gpt-4o-mini', enableContentEnhancement = true) {
     this.apiKey = apiKey;
     this.preferredModel = preferredModel;
+    this.enableContentEnhancement = enableContentEnhancement;
     this.empathyWeights = {
       golden: 0.30,   // Reciprocity
       silver: 0.25,   // Non-harm
@@ -12,6 +13,12 @@ class EOQCalculator {
     this.cache = new Map();
     this.contentEnhancer = new ContentEnhancer();
     this.loadCache();
+  }
+
+  // Set content enhancement preference
+  setContentEnhancement(enabled) {
+    this.enableContentEnhancement = enabled;
+    console.log('EOQ Calculator: Content enhancement', enabled ? 'enabled' : 'disabled');
   }
 
   // Main EOQ calculation method
@@ -30,14 +37,18 @@ class EOQCalculator {
       return cached;
     }
 
-    // Phase 1: Enhanced content analysis
+    // Phase 1: Enhanced content analysis (if enabled)
     let enhancedContent = content;
-    try {
-      const enhancement = await this.contentEnhancer.enhanceResult(searchResult);
-      enhancedContent = { ...content, enhancement };
-      console.log('EOQ: Content enhancement completed, method:', enhancement.method);
-    } catch (error) {
-      console.warn('EOQ: Content enhancement failed, using basic content:', error.message);
+    if (this.enableContentEnhancement) {
+      try {
+        const enhancement = await this.contentEnhancer.enhanceResult(searchResult);
+        enhancedContent = { ...content, enhancement };
+        console.log('EOQ: Content enhancement completed, method:', enhancement.method);
+      } catch (error) {
+        console.warn('EOQ: Content enhancement failed, using basic content:', error.message);
+      }
+    } else {
+      console.log('EOQ: Content enhancement disabled by user preference');
     }
 
     // Detailed logging for diagnostics

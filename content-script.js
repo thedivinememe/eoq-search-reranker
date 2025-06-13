@@ -45,15 +45,17 @@
         eoqEnabled = true, 
         hideSponsoredResults = true,
         debugMode = false,
+        enableContentEnhancement = true,
         preferredModel = 'gpt-4o-mini'
-      } = await chrome.storage.sync.get(['apiKey', 'eoqEnabled', 'hideSponsoredResults', 'debugMode', 'preferredModel']);
+      } = await chrome.storage.sync.get(['apiKey', 'eoqEnabled', 'hideSponsoredResults', 'debugMode', 'enableContentEnhancement', 'preferredModel']);
       
       console.log('API key available:', !!apiKey);
       console.log('EOQ enabled:', eoqEnabled);
       console.log('Debug mode:', debugMode);
+      console.log('Content enhancement enabled:', enableContentEnhancement);
 
       // Initialize components
-      calculator = new EOQCalculator(apiKey, preferredModel);
+      calculator = new EOQCalculator(apiKey, preferredModel, enableContentEnhancement);
       interceptor = new SearchInterceptor();
       interceptor.hideSponsoredResults = hideSponsoredResults;
       interceptor.debugMode = debugMode;
@@ -459,6 +461,12 @@
           interceptor.debugMode = settings.debugMode;
           console.log('Debug mode updated:', settings.debugMode);
         }
+      }
+      
+      // Update calculator settings
+      if (calculator && settings.enableContentEnhancement !== undefined) {
+        calculator.setContentEnhancement(settings.enableContentEnhancement);
+        console.log('Content enhancement updated:', settings.enableContentEnhancement);
       }
       
       // Handle EOQ toggle
