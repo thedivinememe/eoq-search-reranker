@@ -508,6 +508,20 @@ We welcome contributions to improve the EOQ framework and extension functionalit
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+### MIT License Summary
+
+The MIT License is a permissive open source license that allows you to:
+- ✅ Use the software for any purpose (commercial or non-commercial)
+- ✅ Modify and distribute the software
+- ✅ Include the software in proprietary projects
+- ✅ Sublicense the software
+
+**Requirements:**
+- Include the original copyright notice and license text in any substantial portions
+- The software is provided "as is" without warranty
+
+This license promotes open collaboration while allowing maximum flexibility for users and contributors.
+
 ## 🙏 Acknowledgments
 
 - OpenAI for providing the GPT API for content analysis
