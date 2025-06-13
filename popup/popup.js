@@ -21,6 +21,9 @@ document.addEventListener('DOMContentLoaded', async function() {
   const showOverlaysCheckbox = document.getElementById('show-overlays');
   const cacheScoresCheckbox = document.getElementById('cache-scores');
   const hideSponsoredCheckbox = document.getElementById('hide-sponsored');
+  const hideAiContentCheckbox = document.getElementById('hide-ai-content');
+  const hideImagesCheckbox = document.getElementById('hide-images');
+  const hideVideosCheckbox = document.getElementById('hide-videos');
   const debugModeCheckbox = document.getElementById('debug-mode');
   const enableContentEnhancementCheckbox = document.getElementById('enable-content-enhancement');
   
@@ -44,6 +47,9 @@ document.addEventListener('DOMContentLoaded', async function() {
   showOverlaysCheckbox.addEventListener('change', updateSettings);
   cacheScoresCheckbox.addEventListener('change', updateSettings);
   hideSponsoredCheckbox.addEventListener('change', updateSettings);
+  hideAiContentCheckbox.addEventListener('change', updateSettings);
+  hideImagesCheckbox.addEventListener('change', updateSettings);
+  hideVideosCheckbox.addEventListener('change', updateSettings);
   debugModeCheckbox.addEventListener('change', updateSettings);
   enableContentEnhancementCheckbox.addEventListener('change', updateSettings);
   
@@ -68,6 +74,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         'showOverlays', 
         'cacheScores',
         'hideSponsoredResults',
+        'hideAiContent',
+        'hideImages',
+        'hideVideos',
         'debugMode',
         'enableContentEnhancement',
         'preferredModel'
@@ -85,6 +94,9 @@ document.addEventListener('DOMContentLoaded', async function() {
       showOverlaysCheckbox.checked = settings.showOverlays !== false;
       cacheScoresCheckbox.checked = settings.cacheScores !== false;
       hideSponsoredCheckbox.checked = settings.hideSponsoredResults !== false;
+      hideAiContentCheckbox.checked = settings.hideAiContent !== false;
+      hideImagesCheckbox.checked = settings.hideImages === true;
+      hideVideosCheckbox.checked = settings.hideVideos === true;
       debugModeCheckbox.checked = settings.debugMode === true;
       enableContentEnhancementCheckbox.checked = settings.enableContentEnhancement !== false;
 
@@ -200,6 +212,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         showOverlays: showOverlaysCheckbox.checked,
         cacheScores: cacheScoresCheckbox.checked,
         hideSponsoredResults: hideSponsoredCheckbox.checked,
+        hideAiContent: hideAiContentCheckbox.checked,
+        hideImages: hideImagesCheckbox.checked,
+        hideVideos: hideVideosCheckbox.checked,
         debugMode: debugModeCheckbox.checked,
         enableContentEnhancement: enableContentEnhancementCheckbox.checked
       };
